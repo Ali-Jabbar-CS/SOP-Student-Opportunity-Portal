@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { OPPS } from '../data/mockData'
+import { supabase } from '../lib/supabase'
 import OppCard from '../components/OppCard'
 
 const VISA_FILTERS = {
@@ -12,24 +12,68 @@ const VISA_FILTERS = {
 
 const SIMILAR = [
   { title: 'Gates Millennium Scholars', org: 'Gates Foundation', match: 94, logo: '#0D9488', type: 'Scholarship', visa: 'ok' },
-  { title: 'INROADS Internship',        org: 'INROADS',          match: 91, logo: '#7C3AED', type: 'Internship', visa: 'ok' },
-  { title: 'HACU National Internship',  org: 'HACU',             match: 96, logo: '#EA580C', type: 'Internship', visa: 'ok' },
+  { title: 'INROADS Internship',        org: 'INROADS',          match: 91, logo: '#7C3AED', type: 'Internship',  visa: 'ok' },
+  { title: 'HACU National Internship',  org: 'HACU',             match: 96, logo: '#EA580C', type: 'Internship',  visa: 'ok' },
   { title: 'UNCF Scholarship',          org: 'UNCF',             match: 89, logo: '#D97706', type: 'Scholarship', visa: 'ok' },
   { title: 'Cisco ThingQbator',         org: 'Cisco',            match: 83, logo: '#0284C7', type: 'Fellowship',  visa: 'maybe' },
 ]
 
 export default function Opportunities() {
   const navigate = useNavigate()
-  const [typeFilter, setTypeFilter]  = useState('all')
-  const [visaFilter, setVisaFilter]  = useState('all')
-  const [query, setQuery]            = useState('')
 
-  const filtered = OPPS.filter(o =>
+  const [opps, setOpps]            = useState([])
+  const [loading, setLoading]      = useState(true)
+  const [typeFilter, setTypeFilter] = useState('all')
+  const [visaFilter, setVisaFilter] = useState('all')
+  const [query, setQuery]          = useState('')
+
+  // Fetch from Supabase on mount
+  useEffect(() => {
+    const fetchOpps = async () => {
+      setLoading(true)
+      const { data, error } = await supabase
+        .from('opportunities')
+        .select('*')
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+
+      if (error) {
+        console.error('Error fetching opportunities:', error.message)
+      } else {
+        setOpps(data)
+      }
+      setLoading(false)
+    }
+
+    fetchOpps()
+  }, [])
+
+  // Filter logic
+  const filtered = opps.filter(o =>
     (typeFilter === 'all' || o.type === typeFilter) &&
-    (visaFilter === 'all' || o.visaStatus === visaFilter) &&
-    (!query || o.title.toLowerCase().includes(query.toLowerCase()) ||
-               o.org.toLowerCase().includes(query.toLowerCase()))
+    (visaFilter === 'all' || o.visa_status === visaFilter) &&
+    (!query ||
+      o.title.toLowerCase().includes(query.toLowerCase()) ||
+      o.org.toLowerCase().includes(query.toLowerCase()))
   )
+
+  // Map Supabase row to the shape OppCard expects
+  const mapOpp = (o) => ({
+    id:          o.id,
+    title:       o.title,
+    org:         o.org,
+    type:        o.type,
+    match:       Math.floor(Math.random() * 15) + 83, // placeholder until AI scoring
+    tags:        o.tags || [],
+    deadline:    o.deadline,
+    urgent:      o.deadline_date ? new Date(o.deadline_date) - new Date() < 7 * 24 * 60 * 60 * 1000 : false,
+    logo:        o.logo_color,
+    initials:    o.initials,
+    location:    o.location,
+    stipend:     o.stipend,
+    visaStatus:  o.visa_status,
+    visaLabel:   o.visa_label,
+  })
 
   return (
     <div style={{ padding: '26px 30px' }}>
@@ -45,7 +89,8 @@ export default function Opportunities() {
             Visa Compatibility Filter
           </h4>
           <span style={{
-            marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4,
+            marginLeft: 'auto',
+            display: 'inline-flex', alignItems: 'center', gap: 4,
             background: 'var(--amber-light)', color: 'var(--amber)',
             border: '1px solid rgba(252,211,77,0.3)',
             fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20,
@@ -120,8 +165,8 @@ export default function Opportunities() {
           background: 'var(--amber-light)', color: 'var(--amber)',
           border: '1px solid rgba(252,211,77,0.3)',
           fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20,
-        }}>✦ {filtered.length} matched results</span>
-        <span style={{ fontSize: 11, color: 'var(--text3)' }}>Sorted by match %</span>
+        }}>✦ {loading ? '...' : `${filtered.length} matched results`}</span>
+        <span style={{ fontSize: 11, color: 'var(--text3)' }}>Live from database</span>
         {visaFilter !== 'all' && (
           <span style={{
             fontSize: 11, fontWeight: 700, padding: '3px 9px', borderRadius: 20,
@@ -130,22 +175,36 @@ export default function Opportunities() {
         )}
       </div>
 
-      {/* Opportunity Cards Grid */}
-      {filtered.length > 0 ? (
+      {/* Loading State */}
+      {loading ? (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
+          {[...Array(4)].map((_, i) => (
+            <div key={i} style={{
+              background: 'var(--surface)', border: '1px solid var(--border)',
+              borderRadius: 16, padding: 18, height: 180,
+              animation: 'pulse 1.5s ease-in-out infinite',
+            }}>
+              <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>
+              <div style={{ width: '60%', height: 14, background: 'var(--border)', borderRadius: 7, marginBottom: 10 }} />
+              <div style={{ width: '40%', height: 10, background: 'var(--border)', borderRadius: 5, marginBottom: 16 }} />
+              <div style={{ width: '80%', height: 10, background: 'var(--border)', borderRadius: 5 }} />
+            </div>
+          ))}
+        </div>
+
+      ) : filtered.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
           {filtered.map(o => (
             <OppCard
               key={o.id}
-              opp={o}
+              opp={mapOpp(o)}
               onCoverLetter={() => navigate('/cover-letter')}
             />
           ))}
         </div>
+
       ) : (
-        <div style={{
-          textAlign: 'center', padding: '60px 20px',
-          color: 'var(--text2)', fontSize: 14,
-        }}>
+        <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text2)' }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>🔎</div>
           <div style={{ fontFamily: 'Sora, sans-serif', fontWeight: 700, color: 'var(--text)', marginBottom: 6 }}>
             No results found
@@ -201,7 +260,6 @@ export default function Opportunities() {
                     color: s.visa === 'ok' ? 'var(--green)' : 'var(--amber)',
                   }}>{s.visa === 'ok' ? 'Visa OK' : 'CPT Req'}</span>
                   <span style={{
-                    display: 'inline-flex', alignItems: 'center',
                     background: 'var(--teal-light)', color: 'var(--teal)',
                     fontSize: 9, fontWeight: 800, padding: '2px 7px', borderRadius: 20,
                   }}>{s.match}%</span>
