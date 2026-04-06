@@ -1,0 +1,100 @@
+@import "tailwindcss";
+
+[data-theme="light"] {
+  --bg: #FDF8F2;
+  --bg2: #FAF3EB;
+  --surface: #FFFFFF;
+  --surface2: #FDF8F2;
+  --surface3: #F5EFE6;
+  --border: #E8DDD0;
+  --border2: #D4C5B2;
+  --navy: #1A2B4A;
+  --sidebar-bg: #1A2B4A;
+  --sidebar-border: rgba(255,255,255,0.07);
+  --sidebar-text: rgba(255,255,255,0.55);
+  --sidebar-active-bg: rgba(251,191,36,0.15);
+  --sidebar-active-text: #FCD34D;
+  --blue: #2563EB;
+  --blue-light: #EFF6FF;
+  --teal: #0D9488;
+  --teal-light: #F0FDFA;
+  --teal-border: #99F6E4;
+  --green: #16A34A;
+  --green-light: #F0FDF4;
+  --amber: #D97706;
+  --amber-light: #FFFBEB;
+  --coral: #EA580C;
+  --coral-light: #FFF7ED;
+  --purple: #7C3AED;
+  --purple-light: #FAF5FF;
+  --red: #DC2626;
+  --red-light: #FEF2F2;
+  --text: #1C1917;
+  --text2: #57534E;
+  --text3: #A8A29E;
+  --accent: #D97706;
+  --shadow: 0 2px 12px rgba(26,43,74,0.07);
+  --shadow-md: 0 6px 28px rgba(26,43,74,0.11);
+  --topbar-bg: #FFFFFF;
+  --card-hover-border: #C4B5A0;
+}
+
+[data-theme="dark"] {
+  --bg: #0E1117;
+  --bg2: #141920;
+  --surface: #1C2333;
+  --surface2: #151B27;
+  --surface3: #232D42;
+  --border: #2A3348;
+  --border2: #374462;
+  --navy: #E2EAF8;
+  --sidebar-bg: #111827;
+  --sidebar-border: rgba(255,255,255,0.06);
+  --sidebar-text: rgba(255,255,255,0.45);
+  --sidebar-active-bg: rgba(251,191,36,0.12);
+  --sidebar-active-text: #FCD34D;
+  --blue: #60A5FA;
+  --blue-light: rgba(96,165,250,0.1);
+  --teal: #2DD4BF;
+  --teal-light: rgba(45,212,191,0.08);
+  --teal-border: rgba(45,212,191,0.25);
+  --green: #4ADE80;
+  --green-light: rgba(74,222,128,0.08);
+  --amber: #FCD34D;
+  --amber-light: rgba(252,211,77,0.1);
+  --coral: #FB923C;
+  --coral-light: rgba(251,146,60,0.1);
+  --purple: #A78BFA;
+  --purple-light: rgba(167,139,250,0.1);
+  --red: #F87171;
+  --red-light: rgba(248,113,113,0.1);
+  --text: #E2EAF8;
+  --text2: #8B9DC8;
+  --text3: #4A5880;
+  --accent: #FCD34D;
+  --shadow: 0 2px 12px rgba(0,0,0,0.3);
+  --shadow-md: 0 6px 28px rgba(0,0,0,0.4);
+  --topbar-bg: #1C2333;
+  --card-hover-border: #374462;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background 0.25s, color 0.25s;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Sora', sans-serif;
+}
+
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
