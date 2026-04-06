@@ -2,6 +2,9 @@ import { useNavigate } from 'react-router-dom'
 import { OPPS } from '../data/mockData'
 import OppCard from '../components/OppCard'
 
+import { supabase } from '../lib/supabase'
+import { useEffect } from 'react'
+
 const DEADLINES = [
   { title: 'NASA JPL Intern', org: 'NASA JPL', days: 18, u: 'urgent' },
   { title: 'Hispanic STEM Scholar', org: 'SHPE', days: 23, u: 'soon' },
@@ -31,6 +34,12 @@ const urgencyBg = (u) => ({
 export default function Dashboard() {
   const navigate = useNavigate()
 
+  useEffect(() => {
+  supabase.from('profiles').select('*').then(({ data, error }) => {
+    if (error) console.log('Supabase error:', error.message)
+    else console.log('Supabase connected ✓', data)
+  })
+}, [])
   return (
     <div style={{ padding: '26px 30px' }}>
 

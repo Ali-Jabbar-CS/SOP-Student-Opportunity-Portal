@@ -9,9 +9,14 @@ import Recruiters from './pages/Recruiters'
 import Notifications from './pages/Notifications'
 import CoverLetterBuilder from './pages/CoverLetterBuilder'
 import LegitChecker from './pages/LegitChecker'
+import { useEffect } from 'react'
 
 function App() {
-  const [theme, setTheme] = useState('light')
+ const [theme, setTheme] = useState('light')
+
+useEffect(() => {
+  document.documentElement.setAttribute('data-theme', 'light')
+}, [])
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light'
