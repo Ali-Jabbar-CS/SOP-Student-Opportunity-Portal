@@ -1,40 +1,28 @@
 import { useNavigate } from 'react-router-dom'
+import { useUser } from '../context/UserContext'
 import { OPPS } from '../data/mockData'
 import OppCard from '../components/OppCard'
-import { useUser } from '../context/UserContext'
-
 
 const DEADLINES = [
-  { title: 'NASA JPL Intern', org: 'NASA JPL', days: 18, u: 'urgent' },
-  { title: 'Hispanic STEM Scholar', org: 'SHPE', days: 23, u: 'soon' },
-  { title: 'AAUW Tech Trek', org: 'AAUW', days: 27, u: 'soon' },
-  { title: 'Spotify Co-op', org: 'Spotify', days: 43, u: 'ok' },
-  { title: 'Sierra Club Research', org: 'Sierra Club', days: 34, u: 'ok' },
+  { title: 'NASA JPL Intern',       org: 'NASA JPL',    days: 18, u: 'urgent' },
+  { title: 'Hispanic STEM Scholar', org: 'SHPE',        days: 23, u: 'soon'   },
+  { title: 'AAUW Tech Trek',        org: 'AAUW',        days: 27, u: 'soon'   },
+  { title: 'Spotify Co-op',         org: 'Spotify',     days: 43, u: 'ok'     },
+  { title: 'Sierra Club Research',  org: 'Sierra Club', days: 34, u: 'ok'     },
 ]
 
 const NEW_FEATURES = [
-  { icon: '🛂', label: 'Visa Compatibility Filter', sub: 'Auto-filter by your status', color: 'var(--green)', path: '/opportunities' },
-  { icon: '✍️', label: 'AI Cover Letter Builder', sub: 'Generate in 30 seconds', color: 'var(--amber)', path: '/cover-letter' },
-  { icon: '🔍', label: '"Is This Legit?" Checker', sub: 'Spot scam postings instantly', color: 'var(--blue)', path: '/legit-check' },
+  { icon: '🛂', label: 'Visa Compatibility Filter', sub: 'Auto-filter by your status',   color: 'var(--green)', path: '/opportunities' },
+  { icon: '✍️', label: 'AI Cover Letter Builder',   sub: 'Generate in 30 seconds',       color: 'var(--amber)', path: '/cover-letter'  },
+  { icon: '🔍', label: '"Is This Legit?" Checker',  sub: 'Spot scam postings instantly', color: 'var(--blue)',  path: '/legit-check'   },
 ]
 
-const urgencyColor = (u) => ({
-  urgent: 'var(--coral)',
-  soon:   'var(--amber)',
-  ok:     'var(--green)',
-}[u])
-
-const urgencyBg = (u) => ({
-  urgent: 'var(--red-light)',
-  soon:   'var(--amber-light)',
-  ok:     'var(--green-light)',
-}[u])
+const urgencyColor = u => ({ urgent: 'var(--coral)', soon: 'var(--amber)', ok: 'var(--green)' }[u])
+const urgencyBg    = u => ({ urgent: 'var(--red-light)', soon: 'var(--amber-light)', ok: 'var(--green-light)' }[u])
 
 export default function Dashboard() {
   const navigate = useNavigate()
   const { profile } = useUser()
-
- 
 
   return (
     <div style={{ padding: '26px 30px' }}>
@@ -42,11 +30,13 @@ export default function Dashboard() {
       {/* Welcome Banner */}
       <div style={{
         background: 'linear-gradient(130deg, #1A2B4A 0%, #243659 55%, #1A3A5C 100%)',
-        borderRadius: 20, padding: '26px 30px', marginBottom: 22, position: 'relative', overflow: 'hidden',
+        borderRadius: 20, padding: '26px 30px', marginBottom: 22,
+        position: 'relative', overflow: 'hidden',
       }}>
-       <h1 style={{ fontFamily: 'Sora, sans-serif', fontSize: 22, fontWeight: 800, color: '#fff', marginBottom: 5 }}>
-  Good morning, {profile?.name?.split(' ')[0] || 'Student'} 👋
-</h1>
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <h1 style={{ fontFamily: 'Sora, sans-serif', fontSize: 22, fontWeight: 800, color: '#fff', marginBottom: 5 }}>
+            Good morning, {profile?.name?.split(' ')[0] || 'Student'} 👋
+          </h1>
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
             You have <strong style={{ color: '#FCD34D' }}>3 upcoming deadlines</strong> this week and{' '}
             <strong style={{ color: '#2DD4BF' }}>12 new matches</strong> since your last visit.
@@ -58,18 +48,14 @@ export default function Dashboard() {
                 background: '#fff', color: '#1A2B4A', fontSize: 12, fontWeight: 700,
                 padding: '9px 18px', borderRadius: 9, border: 'none', cursor: 'pointer',
                 fontFamily: 'Plus Jakarta Sans, sans-serif',
-              }}>
-              View Matches
-            </button>
+              }}>View Matches</button>
             <button
               onClick={() => navigate('/notifications')}
               style={{
                 background: 'rgba(255,255,255,0.1)', color: '#fff', fontSize: 12, fontWeight: 600,
                 padding: '9px 18px', borderRadius: 9, border: '1px solid rgba(255,255,255,0.15)',
                 cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
-              }}>
-              🔔 Set Alerts
-            </button>
+              }}>🔔 Set Alerts</button>
           </div>
         </div>
       </div>
@@ -77,10 +63,10 @@ export default function Dashboard() {
       {/* Stat Cards */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginBottom: 24 }}>
         {[
-          { icon: '🎯', bg: 'var(--blue-light)',   num: 47, label: 'AI-Matched Opps',     delta: '+12 new',   up: true },
+          { icon: '🎯', bg: 'var(--blue-light)',   num: 47, label: 'AI-Matched Opps',     delta: '+12 new',    up: true  },
           { icon: '📋', bg: 'var(--green-light)',  num: 6,  label: 'Applications Active', delta: '2 due soon', up: false },
-          { icon: '⭐', bg: 'var(--amber-light)',  num: 11, label: 'Saved for Later',      delta: '3 close',   up: false },
-          { icon: '🏆', bg: 'var(--purple-light)', num: 2,  label: 'Interviews Booked',   delta: 'Up from 0!', up: true },
+          { icon: '⭐', bg: 'var(--amber-light)',  num: 11, label: 'Saved for Later',      delta: '3 close',    up: false },
+          { icon: '🏆', bg: 'var(--purple-light)', num: 2,  label: 'Interviews Booked',   delta: 'Up from 0!', up: true  },
         ].map((s, i) => (
           <div key={i} style={{
             background: 'var(--surface)', border: '1px solid var(--border)',
@@ -130,14 +116,10 @@ export default function Dashboard() {
           }}>
             {DEADLINES.map((d, i) => (
               <div key={i} style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '9px 0',
+                display: 'flex', alignItems: 'center', gap: 10, padding: '9px 0',
                 borderBottom: i < DEADLINES.length - 1 ? '1px solid var(--border)' : 'none',
               }}>
-                <div style={{
-                  width: 8, height: 8, borderRadius: '50%', flexShrink: 0,
-                  background: urgencyColor(d.u),
-                }} />
+                <div style={{ width: 8, height: 8, borderRadius: '50%', flexShrink: 0, background: urgencyColor(d.u) }} />
                 <div style={{ flex: 1 }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--text)' }}>{d.title}</div>
                   <div style={{ fontSize: 10, color: 'var(--text2)' }}>{d.org}</div>

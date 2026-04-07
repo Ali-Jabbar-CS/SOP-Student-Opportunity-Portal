@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useUser } from '../context/UserContext'
 
 const PAGE_META = {
   '/dashboard':     { title: 'Dashboard',            sub: 'Welcome back, Maria' },
@@ -11,6 +12,7 @@ const PAGE_META = {
 }
 
 export default function Topbar() {
+  const { profile } = useUser()
   const location = useLocation()
   const navigate = useNavigate()
   const meta = PAGE_META[location.pathname] || { title: 'SOP', sub: '' }
@@ -54,12 +56,16 @@ export default function Topbar() {
         </button>
 
         <div style={{
-          width: 36, height: 36, borderRadius: 10,
-          background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: 12, fontWeight: 800, color: '#fff', cursor: 'pointer',
-          fontFamily: 'Sora, sans-serif',
-        }}>MR</div>
+  width: 36, height: 36, borderRadius: 10,
+  background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  fontSize: 12, fontWeight: 800, color: '#fff', cursor: 'pointer',
+  fontFamily: 'Sora, sans-serif',
+}}>
+  {profile?.name
+    ? profile.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()
+    : '??'}
+</div>
       </div>
     </div>
   )
