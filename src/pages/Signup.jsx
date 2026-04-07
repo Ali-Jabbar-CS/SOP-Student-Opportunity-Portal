@@ -25,44 +25,43 @@ export default function Signup() {
   }
 
   const handleSignup = async () => {
-    setLoading(true)
-    setError(null)
+  setLoading(true)
+  setError(null)
 
-    // 1. Create the auth user
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-    })
+  // 1. Create the auth user — trigger auto-creates the profile row
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password,
+  })
 
-    if (authError) {
-      setError(authError.message)
-      setLoading(false)
-      return
-    }
-
-    // 2. Save their profile to the profiles table
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .insert({
-        id:          authData.user.id,
-        name:        data.name,
-        email:       data.email,
-        school:      data.school,
-        major:       data.major,
-        year:        data.year,
-        visa_status: data.visa_status,
-        ethnicity:   data.ethnicity,
-        interests:   data.interests,
-      })
-
-    if (profileError) {
-      setError(profileError.message)
-      setLoading(false)
-      return
-    }
-
-    navigate('/dashboard')
+  if (authError) {
+    setError(authError.message)
+    setLoading(false)
+    return
   }
+
+  // 2. Update the profile row with their full info
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({
+      name:        data.name,
+      school:      data.school,
+      major:       data.major,
+      year:        data.year,
+      visa_status: data.visa_status,
+      ethnicity:   data.ethnicity,
+      interests:   data.interests,
+    })
+    .eq('id', authData.user.id)
+
+  if (profileError) {
+    setError(profileError.message)
+    setLoading(false)
+    return
+  }
+
+  navigate('/dashboard')
+}
 
   const inputStyle = {
     width: '100%', padding: '10px 14px',
