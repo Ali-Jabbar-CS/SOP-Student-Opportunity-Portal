@@ -92,7 +92,7 @@ export default function Login() {
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Password"
                 required
                 style={{
                   width: '100%', padding: '10px 14px',
@@ -154,7 +154,7 @@ export default function Login() {
         <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--text2)' }}>
           Don't have an account?{' '}
           <Link to="/signup" style={{ color: 'var(--blue)', fontWeight: 700, textDecoration: 'none' }}>
-            Sign up free
+            Sign up for free!
           </Link>
         </p>
       </div>

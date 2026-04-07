@@ -1,4 +1,6 @@
 import { NavLink } from 'react-router-dom'
+import { useUser } from '../context/UserContext'
+import { useNavigate } from 'react-router-dom'
 
 const NAV = [
   { to: '/dashboard', label: 'Dashboard', group: 'main', icon: '⊞' },
@@ -11,6 +13,8 @@ const NAV = [
 ]
 
 export default function Sidebar({ theme, toggleTheme }) {
+  const { profile, signOut } = useUser()
+const navigate = useNavigate()
   return (
     <nav style={{
       width: 248,
@@ -118,23 +122,32 @@ export default function Sidebar({ theme, toggleTheme }) {
           </button>
         </div>
 
-        <div style={{
-          display: 'flex', alignItems: 'center', gap: 9,
-          padding: '9px 12px',
-          background: 'rgba(255,255,255,0.05)', borderRadius: 9, cursor: 'pointer',
-        }}>
-          <div style={{
-            width: 34, height: 34, borderRadius: '50%',
-            background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontSize: 12, fontWeight: 800, color: '#fff', flexShrink: 0,
-            fontFamily: 'Sora, sans-serif',
-          }}>MR</div>
-          <div>
-            <div style={{ fontSize: 13, fontWeight: 600, color: '#fff' }}>Maria Rodriguez</div>
-            <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>CS Junior • SDSU • F-1</div>
-          </div>
-        </div>
+        <div
+  onClick={async () => { await signOut(); navigate('/login') }}
+  style={{
+    display: 'flex', alignItems: 'center', gap: 9,
+    padding: '9px 12px',
+    background: 'rgba(255,255,255,0.05)', borderRadius: 9, cursor: 'pointer',
+  }}>
+  <div style={{
+    width: 34, height: 34, borderRadius: '50%',
+    background: 'linear-gradient(135deg, #F59E0B, #EF4444)',
+    display: 'flex', alignItems: 'center', justifyContent: 'center',
+    fontSize: 12, fontWeight: 800, color: '#fff', flexShrink: 0,
+    fontFamily: 'Sora, sans-serif',
+  }}>
+    {profile?.name ? profile.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : '??'}
+  </div>
+  <div style={{ flex: 1, overflow: 'hidden' }}>
+    <div style={{ fontSize: 13, fontWeight: 600, color: '#fff', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+      {profile?.name || 'Student'}
+    </div>
+    <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.4)' }}>
+      {profile?.major || 'SOP Member'} • {profile?.visa_status || ''}
+    </div>
+  </div>
+  <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.3)', flexShrink: 0 }}>Sign out</div>
+</div>
       </div>
     </nav>
   )

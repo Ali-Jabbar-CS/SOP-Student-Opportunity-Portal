@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { OPPS } from '../data/mockData'
 import OppCard from '../components/OppCard'
+import { useUser } from '../context/UserContext'
 
-import { supabase } from '../lib/supabase'
-import { useEffect } from 'react'
 
 const DEADLINES = [
   { title: 'NASA JPL Intern', org: 'NASA JPL', days: 18, u: 'urgent' },
@@ -33,13 +32,10 @@ const urgencyBg = (u) => ({
 
 export default function Dashboard() {
   const navigate = useNavigate()
+  const { profile } = useUser()
 
-  useEffect(() => {
-  supabase.from('profiles').select('*').then(({ data, error }) => {
-    if (error) console.log('Supabase error:', error.message)
-    else console.log('Supabase connected ✓', data)
-  })
-}, [])
+ 
+
   return (
     <div style={{ padding: '26px 30px' }}>
 
@@ -48,10 +44,9 @@ export default function Dashboard() {
         background: 'linear-gradient(130deg, #1A2B4A 0%, #243659 55%, #1A3A5C 100%)',
         borderRadius: 20, padding: '26px 30px', marginBottom: 22, position: 'relative', overflow: 'hidden',
       }}>
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <h1 style={{ fontFamily: 'Sora, sans-serif', fontSize: 22, fontWeight: 800, color: '#fff', marginBottom: 5 }}>
-            Good morning, Maria 👋
-          </h1>
+       <h1 style={{ fontFamily: 'Sora, sans-serif', fontSize: 22, fontWeight: 800, color: '#fff', marginBottom: 5 }}>
+  Good morning, {profile?.name?.split(' ')[0] || 'Student'} 👋
+</h1>
           <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)', lineHeight: 1.6 }}>
             You have <strong style={{ color: '#FCD34D' }}>3 upcoming deadlines</strong> this week and{' '}
             <strong style={{ color: '#2DD4BF' }}>12 new matches</strong> since your last visit.

@@ -141,7 +141,7 @@ export default function Signup() {
               <div style={{ marginBottom: 14 }}>
                 <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Full Name</label>
                 <input
-                  style={inputStyle} placeholder="Maria Rodriguez"
+                  style={inputStyle} placeholder="First & Last Name"
                   value={data.name} onChange={e => setData({ ...data, name: e.target.value })}
                 />
               </div>
