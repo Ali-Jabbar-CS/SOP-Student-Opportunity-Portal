@@ -15,6 +15,7 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import AdvisorLayout from './components/AdvisorLayout'
 import Landing from './pages/Landing'
+import Profile from './pages/Profile'
 
 function StudentLayout({ theme, toggleTheme }) {
   return (
@@ -31,6 +32,7 @@ function StudentLayout({ theme, toggleTheme }) {
           <Route path="/legit-check"   element={<LegitChecker />} />
           <Route path="/notifications" element={<Notifications />} />
           <Route path="*"              element={<Navigate to="/dashboard" />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>
     </div>

@@ -10,6 +10,7 @@ const NAV = [
   { to: '/cover-letter', label: 'Cover Letter AI', group: 'tools', badge: 'NEW', icon: '✎' },
   { to: '/legit-check', label: 'Legit Checker', group: 'tools', badge: 'NEW', icon: '⊛' },
   { to: '/notifications', label: 'Notifications', group: 'settings', badge: 3, icon: '◎' },
+  { to: '/profile', label: 'My Profile', group: 'settings', icon: '◐' },
 ]
 
 export default function Sidebar({ theme, toggleTheme }) {
