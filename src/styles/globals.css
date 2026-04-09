@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@source "../components/landing/**/*.jsx";
+@source "../pages/Landing.jsx";
 
 @theme {
   --color-navy-950: #060d1a;

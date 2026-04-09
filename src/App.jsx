@@ -42,7 +42,6 @@ function AuthenticatedApp({ theme, toggleTheme }) {
 
   if (loading) return null
 
-  // Route advisor to advisor portal, students to main app
   if (profile?.role === 'advisor') {
     return <AdvisorLayout theme={theme} toggleTheme={toggleTheme} />
   }
@@ -57,6 +56,7 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'light')
+    document.documentElement.classList.remove('dark')
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -74,6 +74,11 @@ export default function App() {
     const next = theme === 'light' ? 'dark' : 'light'
     setTheme(next)
     document.documentElement.setAttribute('data-theme', next)
+    if (next === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
   }
 
   if (loading) {
@@ -94,18 +99,17 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/login"  element={session ? <Navigate to="/dashboard" /> : <Login />} />
-      <Route path="/signup" element={session ? <Navigate to="/dashboard" /> : <Signup />} />
+      <Route path="/"        element={session ? <Navigate to="/dashboard" /> : <Navigate to="/landing" />} />
       <Route path="/landing" element={<Landing theme={theme} toggleTheme={toggleTheme} />} />
-
-      <Route path="/landing" element={<Landing theme={theme} toggleTheme={toggleTheme} />} />
-<Route
-  path="/*"
-  element={session
-    ? <AuthenticatedApp theme={theme} toggleTheme={toggleTheme} />
-    : <Navigate to="/landing" />
-  }
-/>
+      <Route path="/login"   element={session ? <Navigate to="/dashboard" /> : <Login />} />
+      <Route path="/signup"  element={session ? <Navigate to="/dashboard" /> : <Signup />} />
+      <Route
+        path="/*"
+        element={session
+          ? <AuthenticatedApp theme={theme} toggleTheme={toggleTheme} />
+          : <Navigate to="/landing" />
+        }
+      />
     </Routes>
   )
 }
