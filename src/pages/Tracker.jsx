@@ -22,27 +22,36 @@ export default function Tracker() {
   })
 
   useEffect(() => {
-    if (!user) return
-    fetchApplications()
-  }, [user])
+  if (!user?.id) return
+  fetchApplications()
+}, [user?.id])
 
   const fetchApplications = async () => {
-    setLoading(true)
+  setLoading(true)
+  try {
     const { data, error } = await supabase
       .from('applications')
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
 
-    if (!error && data) {
+    if (error) {
+      console.error('Tracker fetch error:', error.message)
+      setColumns(EMPTY_COLS)
+    } else if (data) {
       const grouped = { interested: [], applying: [], submitted: [], results: [] }
       data.forEach(app => {
         if (grouped[app.status]) grouped[app.status].push(app)
+        else grouped.interested.push(app)
       })
       setColumns(grouped)
     }
-    setLoading(false)
+  } catch (err) {
+    console.error('Tracker error:', err)
+    setColumns(EMPTY_COLS)
   }
+  setLoading(false)
+}
 
   const moveCard = async (card, newStatus) => {
     const noteParts = (card.notes || '').split('||')
