@@ -2,70 +2,72 @@ import { motion } from 'framer-motion'
 import { Sparkles, Users, Briefcase } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
-export function HeroSection() {
+export function HeroSection({ theme }) {
   const navigate = useNavigate()
+  const dark = theme === 'dark'
 
   return (
-    <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-blue/5 dark:bg-brand-blue/10 rounded-full blur-3xl -z-10 pointer-events-none" />
+    <section style={{ paddingTop: 140, paddingBottom: 80, position: 'relative', overflow: 'hidden' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto', padding: '0 32px', textAlign: 'center' }}>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="text-center max-w-4xl mx-auto">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-brand-light dark:bg-navy-800 text-brand-blue text-sm font-semibold mb-8 border border-brand-blue/10 dark:border-brand-blue/20">
-            <Sparkles className="w-4 h-4" />
-            <span>The premier network for ambitious students</span>
-          </motion.div>
+        {/* Badge */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '8px 18px', borderRadius: 999, background: dark ? '#0f1d32' : '#eff6ff', color: '#3b82f6', fontSize: 13, fontWeight: 600, marginBottom: 32, border: '1px solid rgba(59,130,246,0.2)' }}>
+          <Sparkles size={14} />
+          The premier network for ambitious students
+        </motion.div>
 
-          <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-5xl md:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-8 leading-[1.1]">
-            Your Gateway to <br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-teal">
-              Meaningful Opportunity
-            </span>
-          </motion.h1>
+        {/* Heading */}
+        <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}
+          style={{ fontSize: 'clamp(40px, 6vw, 72px)', fontWeight: 800, lineHeight: 1.1, color: dark ? '#fff' : '#0f172a', marginBottom: 28, letterSpacing: -1 }}>
+          Your Gateway to{' '}
+          <span style={{ background: 'linear-gradient(135deg, #3b82f6, #14b8a6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            Meaningful Opportunity
+          </span>
+        </motion.h1>
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-lg md:text-xl text-slate-600 dark:text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Connecting driven students with the right opportunities, and empowering advisors to guide the next generation of leaders.
-          </motion.p>
+        {/* Subtext */}
+        <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}
+          style={{ fontSize: 18, color: dark ? '#94a3b8' : '#475569', maxWidth: 600, margin: '0 auto 36px', lineHeight: 1.7 }}>
+          Connecting driven students with the right opportunities, and empowering advisors to guide the next generation of leaders.
+        </motion.p>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <button onClick={() => navigate('/signup')}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-brand-blue hover:bg-blue-600 text-white px-8 py-4 rounded-xl text-base font-semibold transition-all hover:shadow-lg hover:shadow-brand-blue/25 hover:-translate-y-0.5">
-              <Users className="w-5 h-5" /> Get Started as Student
-            </button>
-            <button onClick={() => navigate('/signup')}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-white dark:bg-navy-800 hover:bg-slate-50 dark:hover:bg-navy-700 text-slate-900 dark:text-white border border-slate-200 dark:border-navy-600 px-8 py-4 rounded-xl text-base font-semibold transition-all hover:shadow-lg hover:-translate-y-0.5">
-              <Briefcase className="w-5 h-5" /> Get Started as Advisor
-            </button>
-          </motion.div>
-        </div>
+        {/* CTAs */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}
+          style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button onClick={() => navigate('/signup')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#3b82f6', color: '#fff', padding: '14px 28px', borderRadius: 12, fontSize: 15, fontWeight: 600, border: 'none', cursor: 'pointer', transition: 'all 0.15s' }}
+            onMouseEnter={e => e.currentTarget.style.background = '#2563eb'}
+            onMouseLeave={e => e.currentTarget.style.background = '#3b82f6'}>
+            <Users size={18} /> Get Started as Student
+          </button>
+          <button onClick={() => navigate('/signup')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: dark ? '#0f1d32' : '#fff', color: dark ? '#fff' : '#0f172a', padding: '14px 28px', borderRadius: 12, fontSize: 15, fontWeight: 600, border: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}`, cursor: 'pointer', transition: 'all 0.15s' }}>
+            <Briefcase size={18} /> Get Started as Advisor
+          </button>
+        </motion.div>
 
-        {/* Dashboard Preview */}
+        {/* Browser mockup */}
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.5 }}
-          className="mt-20 relative mx-auto max-w-5xl">
-          <div className="rounded-2xl border border-slate-200 dark:border-navy-700 bg-white dark:bg-navy-800 shadow-2xl overflow-hidden">
-            <div className="h-12 border-b border-slate-200 dark:border-navy-700 bg-slate-50 dark:bg-navy-900/50 flex items-center px-4 gap-2">
-              <div className="w-3 h-3 rounded-full bg-red-400" />
-              <div className="w-3 h-3 rounded-full bg-amber-400" />
-              <div className="w-3 h-3 rounded-full bg-green-400" />
+          style={{ marginTop: 60, maxWidth: 900, margin: '60px auto 0' }}>
+          <div style={{ borderRadius: 16, border: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}`, background: dark ? '#0f1d32' : '#fff', boxShadow: '0 25px 60px rgba(0,0,0,0.15)', overflow: 'hidden' }}>
+            <div style={{ height: 44, borderBottom: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}`, background: dark ? '#0a1628' : '#f8fafc', display: 'flex', alignItems: 'center', padding: '0 16px', gap: 8 }}>
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#f87171' }} />
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#fbbf24' }} />
+              <div style={{ width: 12, height: 12, borderRadius: '50%', background: '#34d399' }} />
             </div>
-            <div className="aspect-[16/9] bg-slate-100 dark:bg-navy-900 p-8 flex flex-col gap-6">
-              <div className="flex gap-6 h-full">
-                <div className="w-64 hidden md:flex flex-col gap-4">
-                  <div className="h-8 w-32 bg-slate-200 dark:bg-navy-800 rounded-md" />
-                  <div className="h-4 w-full bg-slate-200 dark:bg-navy-800 rounded-md mt-4" />
-                  <div className="h-4 w-5/6 bg-slate-200 dark:bg-navy-800 rounded-md" />
-                  <div className="h-4 w-4/6 bg-slate-200 dark:bg-navy-800 rounded-md" />
-                </div>
-                <div className="flex-1 flex flex-col gap-6">
-                  <div className="h-32 w-full bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm" />
-                  <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm" />
-                    <div className="bg-white dark:bg-navy-800 rounded-xl border border-slate-200 dark:border-navy-700 shadow-sm" />
-                  </div>
+            <div style={{ aspectRatio: '16/9', background: dark ? '#0a1628' : '#f1f5f9', padding: 28, display: 'flex', gap: 20 }}>
+              <div style={{ width: 180, display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <div style={{ height: 28, width: '70%', background: dark ? '#0f1d32' : '#e2e8f0', borderRadius: 6 }} />
+                <div style={{ height: 12, width: '100%', background: dark ? '#0f1d32' : '#e2e8f0', borderRadius: 4, marginTop: 12 }} />
+                <div style={{ height: 12, width: '80%', background: dark ? '#0f1d32' : '#e2e8f0', borderRadius: 4 }} />
+                <div style={{ height: 12, width: '60%', background: dark ? '#0f1d32' : '#e2e8f0', borderRadius: 4 }} />
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 16 }}>
+                <div style={{ height: 100, background: dark ? '#0f1d32' : '#fff', borderRadius: 12, border: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}` }} />
+                <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+                  <div style={{ background: dark ? '#0f1d32' : '#fff', borderRadius: 12, border: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}` }} />
+                  <div style={{ background: dark ? '#0f1d32' : '#fff', borderRadius: 12, border: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}` }} />
                 </div>
               </div>
             </div>

@@ -1,44 +1,42 @@
 import { motion } from 'framer-motion'
-import { Quote } from 'lucide-react'
 
 const testimonials = [
-  { quote: 'SOP completely changed my job search. The visa filter alone saved me from applying to 20 positions I wasn\'t eligible for. Found my NASA internship in two weeks.', name: 'Maria Rodriguez', role: 'CS Junior, SDSU — F-1 Student',           type: 'Student' },
-  { quote: 'Managing student applications used to take hours. Now I can see every student\'s deadlines, send recommendations, and track their progress in one place.', name: 'Dr. Patricia Nguyen', role: 'Career Advisor, Grossmont College', type: 'Advisor' },
-  { quote: "The AI cover letter builder is incredible. It knew my background and the job description and wrote something way better than I could have on my own.", name: 'Ahmed Hassan', role: 'Mechanical Eng. Junior — F-1 Student',               type: 'Student' },
+  { quote: "SOP completely changed my job search. The visa filter alone saved me from applying to 20 positions I wasn't eligible for. Found my NASA internship in two weeks.", name: 'Maria Rodriguez',    role: 'CS Junior, SDSU — F-1 Student'          },
+  { quote: "Managing student applications used to take hours. Now I can see every student's deadlines, send recommendations, and track their progress in one place.",         name: 'Dr. Patricia Nguyen', role: 'Career Advisor, Grossmont College'        },
+  { quote: "The AI cover letter builder is incredible. It knew my background and the job description and wrote something way better than I could have on my own.",             name: 'Ahmed Hassan',        role: 'Mechanical Eng. Junior — F-1 Student'    },
 ]
 
-export function TestimonialsSection() {
+export function TestimonialsSection({ theme }) {
+  const dark = theme === 'dark'
+
   return (
-    <section id="testimonials" className="py-24 bg-slate-50 dark:bg-navy-900">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+    <section id="testimonials" style={{ padding: '80px 32px', background: dark ? '#060d1a' : '#f8fafc' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 56px' }}>
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+            style={{ fontSize: 36, fontWeight: 800, color: dark ? '#fff' : '#0f172a', marginBottom: 14 }}>
             Trusted by students and advisors
           </motion.h2>
           <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
-            className="text-lg text-slate-600 dark:text-slate-400">
+            style={{ fontSize: 16, color: dark ? '#64748b' : '#475569' }}>
             Don't just take our word for it. Here's what our community has to say.
           </motion.p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
           {testimonials.map((t, i) => (
             <motion.div key={t.name}
               initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-white dark:bg-navy-800 rounded-2xl p-8 border border-slate-200 dark:border-navy-700 shadow-sm relative">
-              <Quote className="absolute top-8 right-8 w-8 h-8 text-slate-100 dark:text-navy-700" />
-              <div className="relative z-10">
-                <p className="text-slate-700 dark:text-slate-300 text-lg leading-relaxed mb-8">"{t.quote}"</p>
-                <div className="flex items-center gap-4">
-                  <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #14b8a6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: '#fff', flexShrink: 0 }}>
-                    {t.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
-                  </div>
-                  <div>
-                    <h4 className="font-bold text-slate-900 dark:text-white">{t.name}</h4>
-                    <p className="text-sm text-slate-500 dark:text-slate-400">{t.role}</p>
-                  </div>
+              style={{ background: dark ? '#0f1d32' : '#fff', borderRadius: 20, padding: 32, border: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}` }}>
+              <p style={{ fontSize: 15, color: dark ? '#cbd5e1' : '#334155', lineHeight: 1.8, marginBottom: 24 }}>"{t.quote}"</p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                <div style={{ width: 44, height: 44, borderRadius: '50%', background: 'linear-gradient(135deg, #3b82f6, #14b8a6)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 800, color: '#fff', flexShrink: 0 }}>
+                  {t.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
+                </div>
+                <div>
+                  <div style={{ fontSize: 14, fontWeight: 700, color: dark ? '#fff' : '#0f172a' }}>{t.name}</div>
+                  <div style={{ fontSize: 12, color: dark ? '#64748b' : '#64748b' }}>{t.role}</div>
                 </div>
               </div>
             </motion.div>

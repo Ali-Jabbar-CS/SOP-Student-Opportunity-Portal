@@ -4,71 +4,69 @@ import { UserPlus, Search, Handshake, BookOpen, Users, Star } from 'lucide-react
 
 const steps = {
   student: [
-    { icon: UserPlus,  title: 'Create Your Profile',      description: 'Fill in your major, visa status, ethnicity, and interests. SOP uses this to find opportunities built specifically for you.' },
-    { icon: Search,    title: 'Discover Opportunities',    description: 'Browse AI-matched internships, scholarships, grants, and volunteering filtered by your visa eligibility.' },
-    { icon: Handshake, title: 'Apply & Track Progress',    description: 'Apply directly, generate a personalized cover letter with AI, and track every application in your Kanban board.' },
+    { icon: UserPlus,  title: 'Create Your Profile',    description: 'Fill in your major, visa status, ethnicity, and interests. SOP uses this to find opportunities built specifically for you.' },
+    { icon: Search,    title: 'Discover Opportunities',  description: 'Browse AI-matched internships, scholarships, grants, and volunteering filtered by your visa eligibility.' },
+    { icon: Handshake, title: 'Apply & Track Progress',  description: 'Apply directly, generate a personalized cover letter with AI, and track every application in your Kanban board.' },
   ],
   advisor: [
-    { icon: BookOpen, title: 'Set Up Your Portal',         description: 'Sign up as an advisor, link to your institution, and add the students you work with to your roster.' },
-    { icon: Users,    title: 'Monitor Your Students',      description: 'See each student\'s visa status, active applications, urgent deadlines, and overall progress at a glance.' },
-    { icon: Star,     title: 'Recommend & Guide',          description: 'Browse all opportunities and send personalized recommendations with a personal note directly to your students.' },
+    { icon: BookOpen, title: 'Set Up Your Portal',       description: 'Sign up as an advisor, link to your institution, and add the students you work with to your roster.' },
+    { icon: Users,    title: 'Monitor Your Students',    description: "See each student's visa status, active applications, urgent deadlines, and overall progress at a glance." },
+    { icon: Star,     title: 'Recommend & Guide',        description: 'Browse all opportunities and send personalized recommendations with a personal note directly to your students.' },
   ],
 }
 
-export function HowItWorksSection() {
+export function HowItWorksSection({ theme }) {
   const [tab, setTab] = useState('student')
+  const dark = theme === 'dark'
 
   return (
-    <section id="how-it-works" className="py-24 bg-white dark:bg-navy-900/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+    <section id="how-it-works" style={{ padding: '80px 32px', background: dark ? '#0a1628' : '#fff' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ textAlign: 'center', maxWidth: 640, margin: '0 auto 56px' }}>
           <motion.h2 initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+            style={{ fontSize: 36, fontWeight: 800, color: dark ? '#fff' : '#0f172a', marginBottom: 14 }}>
             How SOP Works
           </motion.h2>
           <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
-            className="text-lg text-slate-600 dark:text-slate-400">
+            style={{ fontSize: 16, color: dark ? '#64748b' : '#475569', lineHeight: 1.7 }}>
             A streamlined process designed to make connections seamless and productive.
           </motion.p>
         </div>
 
-        <div className="flex justify-center mb-12">
-          <div className="bg-slate-100 dark:bg-navy-800 p-1.5 rounded-xl inline-flex">
+        {/* Tab Toggle */}
+        <div style={{ display: 'flex', justifyContent: 'center', marginBottom: 48 }}>
+          <div style={{ background: dark ? '#0f1d32' : '#f1f5f9', padding: 6, borderRadius: 14, display: 'inline-flex', gap: 4 }}>
             {['student', 'advisor'].map(t => (
               <button key={t} onClick={() => setTab(t)}
-                className={`px-8 py-3 rounded-lg text-sm font-semibold transition-all ${tab === t
-                  ? 'bg-white dark:bg-navy-700 text-slate-900 dark:text-white shadow-sm'
-                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'}`}>
+                style={{
+                  padding: '10px 28px', borderRadius: 10, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: 'none', transition: 'all 0.15s', fontFamily: 'Plus Jakarta Sans, sans-serif',
+                  background: tab === t ? (dark ? '#1e3a5f' : '#fff') : 'transparent',
+                  color: tab === t ? (dark ? '#fff' : '#0f172a') : (dark ? '#64748b' : '#64748b'),
+                  boxShadow: tab === t ? '0 1px 4px rgba(0,0,0,0.1)' : 'none',
+                }}>
                 For {t.charAt(0).toUpperCase() + t.slice(1)}s
               </button>
             ))}
           </div>
         </div>
 
-        <div className="relative min-h-[400px]">
-          <AnimatePresence mode="wait">
-            <motion.div key={tab}
-              initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="grid md:grid-cols-3 gap-8 relative z-10">
-              {steps[tab].map((step, i) => (
-                <div key={step.title} className="relative">
-                  {i < 2 && <div className="hidden md:block absolute top-12 left-[60%] w-[80%] h-[2px] bg-slate-200 dark:bg-navy-700" />}
-                  <div className="bg-white dark:bg-navy-800 rounded-2xl p-8 border border-slate-200 dark:border-navy-700 shadow-sm relative z-10 h-full flex flex-col items-center text-center">
-                    <div className="w-16 h-16 rounded-2xl bg-brand-blue text-white flex items-center justify-center mb-6 shadow-lg shadow-brand-blue/20">
-                      <step.icon className="w-8 h-8" />
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-navy-700 text-slate-600 dark:text-slate-300 font-bold flex items-center justify-center mb-4 absolute -top-4 border-4 border-white dark:border-navy-800">
-                      {i + 1}
-                    </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-3">{step.title}</h3>
-                    <p className="text-slate-600 dark:text-slate-400 leading-relaxed">{step.description}</p>
+        <AnimatePresence mode="wait">
+          <motion.div key={tab} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -20 }} transition={{ duration: 0.3 }}
+            style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24 }}>
+            {steps[tab].map((step, i) => (
+              <div key={step.title} style={{ position: 'relative' }}>
+                <div style={{ background: dark ? '#0f1d32' : '#fff', borderRadius: 20, padding: 32, border: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}`, textAlign: 'center', position: 'relative' }}>
+                  <div style={{ position: 'absolute', top: -16, left: '50%', transform: 'translateX(-50%)', width: 32, height: 32, borderRadius: '50%', background: dark ? '#1e3a5f' : '#f1f5f9', border: `4px solid ${dark ? '#0a1628' : '#fff'}`, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 13, fontWeight: 700, color: dark ? '#fff' : '#0f172a' }}>{i + 1}</div>
+                  <div style={{ width: 64, height: 64, borderRadius: 16, background: '#3b82f6', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '16px auto 20px' }}>
+                    <step.icon size={28} color="#fff" />
                   </div>
+                  <h3 style={{ fontSize: 18, fontWeight: 700, color: dark ? '#fff' : '#0f172a', marginBottom: 10 }}>{step.title}</h3>
+                  <p style={{ fontSize: 14, color: dark ? '#64748b' : '#475569', lineHeight: 1.7 }}>{step.description}</p>
                 </div>
-              ))}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+              </div>
+            ))}
+          </motion.div>
+        </AnimatePresence>
       </div>
     </section>
   )

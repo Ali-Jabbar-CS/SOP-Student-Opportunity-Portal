@@ -1,74 +1,63 @@
 import { GraduationCap } from 'lucide-react'
 
-export function Footer() {
+export function Footer({ theme }) {
+  const dark = theme === 'dark'
+
   return (
-    <footer className="bg-white dark:bg-navy-950 border-t border-slate-200 dark:border-navy-800 pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <footer style={{ background: dark ? '#060d1a' : '#fff', borderTop: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}`, padding: '60px 32px 32px' }}>
+      <div style={{ maxWidth: 1280, margin: '0 auto' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: '1.5fr 1fr 1fr 1fr', gap: 48, marginBottom: 48 }}>
 
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-
-          {/* Brand Column */}
+          {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-6">
-              <div className="bg-brand-blue p-2 rounded-lg">
-                <GraduationCap className="w-6 h-6 text-white" />
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 16 }}>
+              <div style={{ background: '#3b82f6', padding: 8, borderRadius: 8 }}>
+                <GraduationCap size={20} color="#fff" />
               </div>
-              <span className="text-2xl font-bold tracking-tight text-slate-900 dark:text-white">SOP</span>
+              <span style={{ fontSize: 20, fontWeight: 800, color: dark ? '#fff' : '#0f172a' }}>SOP</span>
             </div>
-            <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
+            <p style={{ fontSize: 13, color: '#64748b', lineHeight: 1.7, marginBottom: 20 }}>
               Empowering the next generation of leaders by connecting driven students with the right opportunities and expert advisors.
             </p>
-            <div className="flex items-center gap-4">
-              <a href="#" className="text-sm font-semibold text-slate-400 hover:text-brand-blue transition-colors">Twitter</a>
-              <a href="#" className="text-sm font-semibold text-slate-400 hover:text-brand-blue transition-colors">LinkedIn</a>
-              <a href="#" className="text-sm font-semibold text-slate-400 hover:text-brand-blue transition-colors">GitHub</a>
+            <div style={{ display: 'flex', gap: 16 }}>
+              {['Twitter', 'LinkedIn', 'GitHub'].map(s => (
+                <a key={s} href="#" style={{ fontSize: 13, fontWeight: 600, color: '#64748b', textDecoration: 'none' }}
+                  onMouseEnter={e => e.currentTarget.style.color = '#3b82f6'}
+                  onMouseLeave={e => e.currentTarget.style.color = '#64748b'}>
+                  {s}
+                </a>
+              ))}
             </div>
           </div>
 
-          {/* Platform Column */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-4">Platform</h4>
-            <ul className="space-y-3">
-              {['For Students', 'For Advisors', 'Browse Opportunities', 'Pricing'].map(link => (
-                <li key={link}>
-                  <a href="#" className="text-sm text-slate-500 dark:text-slate-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors">{link}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Company Column */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-4">Company</h4>
-            <ul className="space-y-3">
-              {['About Us', 'Careers', 'Blog', 'Contact'].map(link => (
-                <li key={link}>
-                  <a href="#" className="text-sm text-slate-500 dark:text-slate-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors">{link}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          {/* Legal Column */}
-          <div>
-            <h4 className="font-bold text-slate-900 dark:text-white mb-4">Legal</h4>
-            <ul className="space-y-3">
-              {['Privacy Policy', 'Terms of Service', 'Cookie Policy'].map(link => (
-                <li key={link}>
-                  <a href="#" className="text-sm text-slate-500 dark:text-slate-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors">{link}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
+          {/* Links */}
+          {[
+            { title: 'Platform', links: ['For Students', 'For Advisors', 'Browse Opportunities', 'Pricing'] },
+            { title: 'Company',  links: ['About Us', 'Careers', 'Blog', 'Contact'] },
+            { title: 'Legal',    links: ['Privacy Policy', 'Terms of Service', 'Cookie Policy'] },
+          ].map(col => (
+            <div key={col.title}>
+              <h4 style={{ fontSize: 14, fontWeight: 700, color: dark ? '#fff' : '#0f172a', marginBottom: 16 }}>{col.title}</h4>
+              <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                {col.links.map(link => (
+                  <li key={link}>
+                    <a href="#" style={{ fontSize: 13, color: '#64748b', textDecoration: 'none' }}
+                      onMouseEnter={e => e.currentTarget.style.color = '#3b82f6'}
+                      onMouseLeave={e => e.currentTarget.style.color = '#64748b'}>
+                      {link}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
-        <div className="pt-8 border-t border-slate-200 dark:border-navy-800">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
+        <div style={{ paddingTop: 24, borderTop: `1px solid ${dark ? '#1e3a5f' : '#e2e8f0'}` }}>
+          <p style={{ fontSize: 13, color: '#64748b' }}>
             © {new Date().getFullYear()} Student Opportunity Portal. All rights reserved.
           </p>
         </div>
-
       </div>
     </footer>
   )

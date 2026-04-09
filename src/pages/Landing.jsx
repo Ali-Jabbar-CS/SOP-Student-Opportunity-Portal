@@ -9,17 +9,17 @@ import { Footer }              from '../components/landing/Footer'
 
 export default function Landing({ theme, toggleTheme }) {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-navy-900 text-slate-900 dark:text-white font-sans">
+    <div style={{ minHeight: '100vh', background: theme === 'dark' ? '#0a1628' : '#f8fafc', color: theme === 'dark' ? '#fff' : '#0f172a', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
       <Navbar theme={theme} toggleTheme={toggleTheme} />
       <main>
-        <HeroSection />
-        <StatsBar />
-        <FeaturesSection />
-        <HowItWorksSection />
-        <TestimonialsSection />
-        <CTASection />
+        <HeroSection theme={theme} />
+        <StatsBar theme={theme} />
+        <FeaturesSection theme={theme} />
+        <HowItWorksSection theme={theme} />
+        <TestimonialsSection theme={theme} />
+        <CTASection theme={theme} />
       </main>
-      <Footer />
+      <Footer theme={theme} />
     </div>
   )
 }
