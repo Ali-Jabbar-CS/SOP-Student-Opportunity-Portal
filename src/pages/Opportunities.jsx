@@ -58,22 +58,22 @@ export default function Opportunities() {
   )
 
   // Map Supabase row to the shape OppCard expects
-  const mapOpp = (o) => ({
-    id:          o.id,
-    title:       o.title,
-    org:         o.org,
-    type:        o.type,
-    match:       Math.floor(Math.random() * 15) + 83, // placeholder until AI scoring
-    tags:        o.tags || [],
-    deadline:    o.deadline,
-    urgent:      o.deadline_date ? new Date(o.deadline_date) - new Date() < 7 * 24 * 60 * 60 * 1000 : false,
-    logo:        o.logo_color,
-    initials:    o.initials,
-    location:    o.location,
-    stipend:     o.stipend,
-    visaStatus:  o.visa_status,
-    visaLabel:   o.visa_label,
-  })
+ const mapOpp = (o) => ({
+  id:          o.id,
+  title:       o.title,
+  org:         o.org,
+  type:        o.type,
+  match:       90,
+  tags:        o.tags || [],
+  deadline:    o.deadline,
+  urgent:      o.deadline_date ? new Date(o.deadline_date) - new Date() < 7 * 24 * 60 * 60 * 1000 : false,
+  logo:        o.logo_color,
+  initials:    o.initials,
+  location:    o.location,
+  stipend:     o.stipend,
+  visaStatus:  o.visa_status,
+  visaLabel:   o.visa_label,
+})
 
   return (
     <div style={{ padding: '26px 30px' }}>

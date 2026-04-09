@@ -8,24 +8,6 @@ export function UserProvider({ children }) {
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    // Get current session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
-      else setLoading(false)
-    })
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null)
-      if (session?.user) fetchProfile(session.user.id)
-      else { setProfile(null); setLoading(false) }
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
   const fetchProfile = async (userId) => {
     const { data, error } = await supabase
       .from('profiles')
@@ -36,6 +18,22 @@ export function UserProvider({ children }) {
     if (!error) setProfile(data)
     setLoading(false)
   }
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+      if (session?.user) fetchProfile(session.user.id)
+      else setLoading(false)
+    })
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+      if (session?.user) fetchProfile(session.user.id)
+      else { setProfile(null); setLoading(false) }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
 
   const signOut = async () => {
     await supabase.auth.signOut()
@@ -50,5 +48,4 @@ export function UserProvider({ children }) {
   )
 }
 
-// Custom hook — use this in any component to get the user
 export const useUser = () => useContext(UserContext)
