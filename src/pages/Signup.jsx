@@ -10,7 +10,7 @@ export default function Signup() {
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
   const [data, setData]       = useState({
-    name: '', email: '', password: '',
+    name: '', email: '', password: '', role: 'student',
     school: '', major: '', year: '', visa_status: '',
     ethnicity: [], interests: [],
   })
@@ -25,43 +25,44 @@ export default function Signup() {
   }
 
   const handleSignup = async () => {
-  setLoading(true)
-  setError(null)
+    setLoading(true)
+    setError(null)
 
-  // 1. Create the auth user — trigger auto-creates the profile row
-  const { data: authData, error: authError } = await supabase.auth.signUp({
-    email: data.email,
-    password: data.password,
-  })
-
-  if (authError) {
-    setError(authError.message)
-    setLoading(false)
-    return
-  }
-
-  // 2. Update the profile row with their full info
-  const { error: profileError } = await supabase
-    .from('profiles')
-    .update({
-      name:        data.name,
-      school:      data.school,
-      major:       data.major,
-      year:        data.year,
-      visa_status: data.visa_status,
-      ethnicity:   data.ethnicity,
-      interests:   data.interests,
+    // 1. Create the auth user — trigger auto-creates the profile row
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: data.email,
+      password: data.password,
     })
-    .eq('id', authData.user.id)
 
-  if (profileError) {
-    setError(profileError.message)
-    setLoading(false)
-    return
+    if (authError) {
+      setError(authError.message)
+      setLoading(false)
+      return
+    }
+
+    // 2. Update the profile row with their full info
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .update({
+        name:        data.name,
+        school:      data.school,
+        major:       data.major,
+        year:        data.year,
+        visa_status: data.visa_status,
+        ethnicity:   data.ethnicity,
+        interests:   data.interests,
+        role:        data.role,
+      })
+      .eq('id', authData.user.id)
+
+    if (profileError) {
+      setError(profileError.message)
+      setLoading(false)
+      return
+    }
+
+    navigate('/dashboard')
   }
-
-  navigate('/dashboard')
-}
 
   const inputStyle = {
     width: '100%', padding: '10px 14px',
@@ -139,25 +140,60 @@ export default function Signup() {
           {step === 0 && (
             <div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Full Name</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                  Full Name
+                </label>
                 <input
-                  style={inputStyle} placeholder="First & Last Name"
+                  style={inputStyle} placeholder="Maria Rodriguez"
                   value={data.name} onChange={e => setData({ ...data, name: e.target.value })}
                 />
               </div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Email</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                  Email
+                </label>
                 <input
                   style={inputStyle} type="email" placeholder="you@university.edu"
                   value={data.email} onChange={e => setData({ ...data, email: e.target.value })}
                 />
               </div>
-              <div style={{ marginBottom: 6 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Password</label>
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                  Password
+                </label>
                 <input
                   style={inputStyle} type="password" placeholder="Min 6 characters"
                   value={data.password} onChange={e => setData({ ...data, password: e.target.value })}
                 />
+              </div>
+
+              {/* Role Selector */}
+              <div style={{ marginBottom: 6 }}>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 8 }}>
+                  I am a...
+                </label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+                  {[
+                    { k: 'student', icon: '🎓', label: 'Student',        desc: 'Looking for opportunities' },
+                    { k: 'advisor', icon: '👩‍💼', label: 'Career Advisor', desc: 'Helping students succeed'  },
+                  ].map(r => (
+                    <button
+                      key={r.k}
+                      type="button"
+                      onClick={() => setData({ ...data, role: r.k })}
+                      style={{
+                        padding: '10px 12px', borderRadius: 10, textAlign: 'left',
+                        cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
+                        border: `1.5px solid ${data.role === r.k ? '#1A2B4A' : 'var(--border)'}`,
+                        background: data.role === r.k ? 'rgba(26,43,74,0.06)' : 'var(--surface)',
+                        transition: 'all 0.15s',
+                      }}>
+                      <div style={{ fontSize: 20, marginBottom: 4 }}>{r.icon}</div>
+                      <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{r.label}</div>
+                      <div style={{ fontSize: 10, color: 'var(--text2)' }}>{r.desc}</div>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -166,14 +202,18 @@ export default function Signup() {
           {step === 1 && (
             <div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>University</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                  University
+                </label>
                 <input
                   style={inputStyle} placeholder="San Diego State University"
                   value={data.school} onChange={e => setData({ ...data, school: e.target.value })}
                 />
               </div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Major</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                  Major
+                </label>
                 <input
                   style={inputStyle} placeholder="Computer Science"
                   value={data.major} onChange={e => setData({ ...data, major: e.target.value })}
@@ -181,7 +221,9 @@ export default function Signup() {
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Year</label>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                    Year
+                  </label>
                   <select
                     style={{ ...inputStyle, cursor: 'pointer' }}
                     value={data.year} onChange={e => setData({ ...data, year: e.target.value })}>
@@ -192,7 +234,9 @@ export default function Signup() {
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Visa Status</label>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+                    Visa Status
+                  </label>
                   <select
                     style={{ ...inputStyle, cursor: 'pointer' }}
                     value={data.visa_status} onChange={e => setData({ ...data, visa_status: e.target.value })}>
@@ -268,7 +312,7 @@ export default function Signup() {
           </div>
         </div>
 
-        {/* Login link */}
+        {/* Login Link */}
         <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--text2)' }}>
           Already have an account?{' '}
           <Link to="/login" style={{ color: 'var(--blue)', fontWeight: 700, textDecoration: 'none' }}>

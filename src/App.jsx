@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
+import { useUser } from './context/UserContext'
 import Sidebar from './components/Sidebar'
 import Topbar from './components/Topbar'
 import Dashboard from './pages/Dashboard'
@@ -12,8 +13,9 @@ import CoverLetterBuilder from './pages/CoverLetterBuilder'
 import LegitChecker from './pages/LegitChecker'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import AdvisorLayout from './components/AdvisorLayout'
 
-function ProtectedLayout({ theme, toggleTheme }) {
+function StudentLayout({ theme, toggleTheme }) {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar theme={theme} toggleTheme={toggleTheme} />
@@ -34,6 +36,19 @@ function ProtectedLayout({ theme, toggleTheme }) {
   )
 }
 
+function AuthenticatedApp({ theme, toggleTheme }) {
+  const { profile, loading } = useUser()
+
+  if (loading) return null
+
+  // Route advisor to advisor portal, students to main app
+  if (profile?.role === 'advisor') {
+    return <AdvisorLayout theme={theme} toggleTheme={toggleTheme} />
+  }
+
+  return <StudentLayout theme={theme} toggleTheme={toggleTheme} />
+}
+
 export default function App() {
   const [theme, setTheme]     = useState('light')
   const [session, setSession] = useState(null)
@@ -42,13 +57,11 @@ export default function App() {
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', 'light')
 
-    // Check if a session already exists
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
       setLoading(false)
     })
 
-    // Listen for login / logout events
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
     })
@@ -62,12 +75,11 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', next)
   }
 
-  // Blank spinner while we check auth state
   if (loading) {
     return (
       <div style={{
-        minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'var(--bg)',
+        minHeight: '100vh', display: 'flex', alignItems: 'center',
+        justifyContent: 'center', background: 'var(--bg)',
       }}>
         <style>{`@keyframes spin { to { transform: rotate(360deg) } }`}</style>
         <div style={{
@@ -81,15 +93,12 @@ export default function App() {
 
   return (
     <Routes>
-      {/* Public routes — redirect to dashboard if already logged in */}
       <Route path="/login"  element={session ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/signup" element={session ? <Navigate to="/dashboard" /> : <Signup />} />
-
-      {/* Protected routes — redirect to login if not signed in */}
       <Route
         path="/*"
         element={session
-          ? <ProtectedLayout theme={theme} toggleTheme={toggleTheme} />
+          ? <AuthenticatedApp theme={theme} toggleTheme={toggleTheme} />
           : <Navigate to="/login" />
         }
       />
