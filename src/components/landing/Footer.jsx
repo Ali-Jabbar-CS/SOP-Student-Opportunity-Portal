@@ -1,4 +1,4 @@
-import { GraduationCap, Twitter, Linkedin, Github } from 'lucide-react'
+import { GraduationCap } from 'lucide-react'
 
 export function Footer() {
   return (
@@ -13,11 +13,12 @@ export function Footer() {
             <p className="text-slate-500 dark:text-slate-400 text-sm leading-relaxed mb-6">
               Empowering the next generation of leaders by connecting driven students with the right opportunities and expert advisors.
             </p>
-            <div className="flex items-center gap-4">
-              {[Twitter, Linkedin, Github].map((Icon, i) => (
-                <a key={i} href="#" className="text-slate-400 hover:text-brand-blue transition-colors"><Icon className="w-5 h-5" /></a>
-              ))}
-            </div>
+          <div className="flex items-center gap-4 mt-2">
+  <a href="#" className="text-sm font-semibold text-slate-400 hover:text-brand-blue transition-colors">Twitter</a>
+  <a href="#" className="text-sm font-semibold text-slate-400 hover:text-brand-blue transition-colors">LinkedIn</a>
+  <a href="#" className="text-sm font-semibold text-slate-400 hover:text-brand-blue transition-colors">GitHub</a>
+</div>
+</div>
           </div>
 
           {[

@@ -98,13 +98,14 @@ export default function App() {
       <Route path="/signup" element={session ? <Navigate to="/dashboard" /> : <Signup />} />
       <Route path="/landing" element={<Landing theme={theme} toggleTheme={toggleTheme} />} />
 
-      <Route
-        path="/*"
-        element={session
-          ? <AuthenticatedApp theme={theme} toggleTheme={toggleTheme} />
-          : <Navigate to="/login" />
-        }
-      />
+      <Route path="/landing" element={<Landing theme={theme} toggleTheme={toggleTheme} />} />
+<Route
+  path="/*"
+  element={session
+    ? <AuthenticatedApp theme={theme} toggleTheme={toggleTheme} />
+    : <Navigate to="/landing" />
+  }
+/>
     </Routes>
   )
 }
