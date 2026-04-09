@@ -22,36 +22,36 @@ export default function Tracker() {
   })
 
   useEffect(() => {
-  if (!user?.id) return
-  fetchApplications()
-}, [user?.id])
+    if (!user?.id) return
+    fetchApplications()
+  }, [user?.id])
 
   const fetchApplications = async () => {
-  setLoading(true)
-  try {
-    const { data, error } = await supabase
-      .from('applications')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
+    setLoading(true)
+    try {
+      const { data, error } = await supabase
+        .from('applications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
 
-    if (error) {
-      console.error('Tracker fetch error:', error.message)
+      if (error) {
+        console.error('Tracker fetch error:', error.message)
+        setColumns(EMPTY_COLS)
+      } else if (data) {
+        const grouped = { interested: [], applying: [], submitted: [], results: [] }
+        data.forEach(app => {
+          if (grouped[app.status]) grouped[app.status].push(app)
+          else grouped.interested.push(app)
+        })
+        setColumns(grouped)
+      }
+    } catch (err) {
+      console.error('Tracker error:', err)
       setColumns(EMPTY_COLS)
-    } else if (data) {
-      const grouped = { interested: [], applying: [], submitted: [], results: [] }
-      data.forEach(app => {
-        if (grouped[app.status]) grouped[app.status].push(app)
-        else grouped.interested.push(app)
-      })
-      setColumns(grouped)
     }
-  } catch (err) {
-    console.error('Tracker error:', err)
-    setColumns(EMPTY_COLS)
+    setLoading(false)
   }
-  setLoading(false)
-}
 
   const moveCard = async (card, newStatus) => {
     const noteParts = (card.notes || '').split('||')
@@ -179,74 +179,38 @@ export default function Tracker() {
           </h3>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>
-                Position Title *
-              </label>
-              <input
-                style={inputStyle} placeholder="Software Engineering Intern"
-                value={newApp.title} onChange={e => setNewApp({ ...newApp, title: e.target.value })}
-              />
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>Position Title *</label>
+              <input style={inputStyle} placeholder="Software Engineering Intern" value={newApp.title} onChange={e => setNewApp({ ...newApp, title: e.target.value })} />
             </div>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>
-                Organization *
-              </label>
-              <input
-                style={inputStyle} placeholder="NASA JPL"
-                value={newApp.org} onChange={e => setNewApp({ ...newApp, org: e.target.value })}
-              />
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>Organization *</label>
+              <input style={inputStyle} placeholder="NASA JPL" value={newApp.org} onChange={e => setNewApp({ ...newApp, org: e.target.value })} />
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 12 }}>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>
-                Status
-              </label>
-              <select
-                style={{ ...inputStyle, cursor: 'pointer' }}
-                value={newApp.status} onChange={e => setNewApp({ ...newApp, status: e.target.value })}>
-                {Object.entries(COL_META).map(([k, v]) => (
-                  <option key={k} value={k}>{v.label}</option>
-                ))}
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>Status</label>
+              <select style={{ ...inputStyle, cursor: 'pointer' }} value={newApp.status} onChange={e => setNewApp({ ...newApp, status: e.target.value })}>
+                {Object.entries(COL_META).map(([k, v]) => <option key={k} value={k}>{v.label}</option>)}
               </select>
             </div>
             <div>
-              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>
-                Deadline
-              </label>
-              <input
-                style={inputStyle} type="date"
-                value={newApp.deadline} onChange={e => setNewApp({ ...newApp, deadline: e.target.value })}
-              />
+              <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>Deadline</label>
+              <input style={inputStyle} type="date" value={newApp.deadline} onChange={e => setNewApp({ ...newApp, deadline: e.target.value })} />
             </div>
           </div>
           <div style={{ marginBottom: 16 }}>
-            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>
-              Notes (optional)
-            </label>
-            <input
-              style={inputStyle} placeholder="Any notes about this application..."
-              value={newApp.notes} onChange={e => setNewApp({ ...newApp, notes: e.target.value })}
-            />
+            <label style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 5 }}>Notes (optional)</label>
+            <input style={inputStyle} placeholder="Any notes about this application..." value={newApp.notes} onChange={e => setNewApp({ ...newApp, notes: e.target.value })} />
           </div>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end' }}>
-            <button
-              onClick={() => setAdding(false)}
-              style={{
-                padding: '8px 18px', borderRadius: 9, fontSize: 13, fontWeight: 600,
-                cursor: 'pointer', border: '1.5px solid var(--border)',
-                background: 'transparent', color: 'var(--text2)',
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-              }}>
+            <button onClick={() => setAdding(false)} style={{ padding: '8px 18px', borderRadius: 9, fontSize: 13, fontWeight: 600, cursor: 'pointer', border: '1.5px solid var(--border)', background: 'transparent', color: 'var(--text2)', fontFamily: 'Plus Jakarta Sans, sans-serif' }}>
               Cancel
             </button>
-            <button
-              onClick={addApplication}
-              disabled={saving || !newApp.title || !newApp.org}
+            <button onClick={addApplication} disabled={saving || !newApp.title || !newApp.org}
               style={{
                 padding: '8px 18px', borderRadius: 9, fontSize: 13, fontWeight: 700,
-                cursor: saving || !newApp.title || !newApp.org ? 'not-allowed' : 'pointer',
-                border: 'none',
+                cursor: saving || !newApp.title || !newApp.org ? 'not-allowed' : 'pointer', border: 'none',
                 background: saving || !newApp.title || !newApp.org ? 'var(--border)' : 'var(--blue)',
                 color: saving || !newApp.title || !newApp.org ? 'var(--text3)' : '#fff',
                 fontFamily: 'Plus Jakarta Sans, sans-serif',
@@ -264,8 +228,6 @@ export default function Tracker() {
           Loading your applications...
         </div>
       ) : (
-
-        /* Kanban Board */
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 14 }}>
           {Object.entries(columns).map(([colKey, cards]) => {
             const meta = COL_META[colKey]
@@ -291,10 +253,13 @@ export default function Tracker() {
                       background: 'var(--surface)', border: '1px solid var(--border)',
                       borderRadius: 12, padding: 13, marginBottom: 9,
                     }}>
-                      {/* Title + Org */}
+
+                      {/* Title */}
                       <div style={{ fontFamily: 'Sora, sans-serif', fontSize: 12, fontWeight: 700, color: 'var(--text)', marginBottom: 3 }}>
                         {card.title}
                       </div>
+
+                      {/* Org */}
                       <div style={{ fontSize: 11, color: 'var(--text2)', marginBottom: 8 }}>
                         {card.org}
                       </div>
@@ -306,55 +271,103 @@ export default function Tracker() {
                         </div>
                       )}
 
-                      {/* Result Badge */}
-                      {card.resultType && (
-                        <div style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 4,
-                          fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20, marginBottom: 8,
-                          background: card.resultType === 'accepted' ? 'var(--green-light)' : 'var(--red-light)',
-                          color: card.resultType === 'accepted' ? 'var(--green)' : 'var(--red)',
-                        }}>
-                          {card.resultType === 'accepted' ? '✓ Accepted' : '✗ Rejected'}
+                      {/* Result — only shown in Results column, with toggle buttons */}
+                      {colKey === 'results' && (
+                        <div style={{ marginBottom: 8 }}>
+                          <div style={{ fontSize: 10, color: 'var(--text2)', fontWeight: 600, marginBottom: 5 }}>
+                            Outcome:
+                          </div>
+                          <div style={{ display: 'flex', gap: 4 }}>
+                            <button
+                              onClick={() => moveCard({ ...card, resultType: 'accepted' }, 'results')}
+                              style={{
+                                padding: '3px 9px', borderRadius: 6, fontSize: 9, fontWeight: 700,
+                                cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
+                                border: '1px solid var(--green)',
+                                background: card.resultType === 'accepted' ? 'var(--green)' : 'transparent',
+                                color: card.resultType === 'accepted' ? '#fff' : 'var(--green)',
+                                transition: 'all 0.15s',
+                              }}>
+                              ✓ Accepted
+                            </button>
+                            <button
+                              onClick={() => moveCard({ ...card, resultType: 'rejected' }, 'results')}
+                              style={{
+                                padding: '3px 9px', borderRadius: 6, fontSize: 9, fontWeight: 700,
+                                cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
+                                border: '1px solid var(--red)',
+                                background: card.resultType === 'rejected' ? 'var(--red)' : 'transparent',
+                                color: card.resultType === 'rejected' ? '#fff' : 'var(--red)',
+                                transition: 'all 0.15s',
+                              }}>
+                              ✗ Rejected
+                            </button>
+                          </div>
                         </div>
                       )}
 
-                     {/* Result Badge — clickable to change */}
-{card.resultType && colKey === 'results' && (
-  <div style={{ marginBottom: 8 }}>
-    <div style={{
-      display: 'inline-flex', alignItems: 'center', gap: 4,
-      fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20, marginBottom: 6,
-      background: card.resultType === 'accepted' ? 'var(--green-light)' : 'var(--red-light)',
-      color: card.resultType === 'accepted' ? 'var(--green)' : 'var(--red)',
-    }}>
-      {card.resultType === 'accepted' ? '✓ Accepted' : '✗ Rejected'}
-    </div>
-    <div style={{ display: 'flex', gap: 4 }}>
-      <button
-        onClick={() => moveCard({ ...card, resultType: 'accepted' }, 'results')}
-        style={{
-          padding: '2px 7px', borderRadius: 6, fontSize: 9, fontWeight: 700,
-          cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
-          border: '1px solid var(--green)',
-          background: card.resultType === 'accepted' ? 'var(--green)' : 'transparent',
-          color: card.resultType === 'accepted' ? '#fff' : 'var(--green)',
-        }}>
-        ✓ Accepted
-      </button>
-      <button
-        onClick={() => moveCard({ ...card, resultType: 'rejected' }, 'results')}
-        style={{
-          padding: '2px 7px', borderRadius: 6, fontSize: 9, fontWeight: 700,
-          cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
-          border: '1px solid var(--red)',
-          background: card.resultType === 'rejected' ? 'var(--red)' : 'transparent',
-          color: card.resultType === 'rejected' ? '#fff' : 'var(--red)',
-        }}>
-        ✗ Rejected
-      </button>
-    </div>
-  </div>
-)}
+                      {/* Move Buttons — shown on all columns except results */}
+                      {colKey !== 'results' && (
+                        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 8 }}>
+                          {Object.entries(COL_META).filter(([k]) => k !== colKey).map(([k, v]) => {
+                            if (k === 'results') {
+                              return (
+                                <div key={k} style={{ display: 'flex', gap: 4 }}>
+                                  <button
+                                    onClick={() => moveCard({ ...card, resultType: 'accepted' }, 'results')}
+                                    style={{
+                                      padding: '3px 8px', borderRadius: 6, fontSize: 9, fontWeight: 700,
+                                      cursor: 'pointer', border: '1px solid var(--green)',
+                                      background: 'transparent', color: 'var(--green)',
+                                      fontFamily: 'Plus Jakarta Sans, sans-serif',
+                                    }}>
+                                    ✓ Accepted
+                                  </button>
+                                  <button
+                                    onClick={() => moveCard({ ...card, resultType: 'rejected' }, 'results')}
+                                    style={{
+                                      padding: '3px 8px', borderRadius: 6, fontSize: 9, fontWeight: 700,
+                                      cursor: 'pointer', border: '1px solid var(--red)',
+                                      background: 'transparent', color: 'var(--red)',
+                                      fontFamily: 'Plus Jakarta Sans, sans-serif',
+                                    }}>
+                                    ✗ Rejected
+                                  </button>
+                                </div>
+                              )
+                            }
+                            return (
+                              <button key={k} onClick={() => moveCard(card, k)}
+                                style={{
+                                  padding: '3px 8px', borderRadius: 6, fontSize: 9, fontWeight: 700,
+                                  cursor: 'pointer', border: `1px solid ${v.color}`,
+                                  background: 'transparent', color: v.color,
+                                  fontFamily: 'Plus Jakarta Sans, sans-serif',
+                                }}>
+                                → {v.label}
+                              </button>
+                            )
+                          })}
+                        </div>
+                      )}
+
+                      {/* Move back button — only in results column */}
+                      {colKey === 'results' && (
+                        <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 8 }}>
+                          {Object.entries(COL_META).filter(([k]) => k !== 'results').map(([k, v]) => (
+                            <button key={k} onClick={() => moveCard(card, k)}
+                              style={{
+                                padding: '3px 8px', borderRadius: 6, fontSize: 9, fontWeight: 700,
+                                cursor: 'pointer', border: `1px solid ${v.color}`,
+                                background: 'transparent', color: v.color,
+                                fontFamily: 'Plus Jakarta Sans, sans-serif',
+                              }}>
+                              ← {v.label}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
                       {/* Progress Bar */}
                       <div style={{ height: 3, borderRadius: 2, background: 'var(--border)', overflow: 'hidden', marginBottom: 8 }}>
                         <div style={{
