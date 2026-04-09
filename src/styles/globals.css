@@ -1,5 +1,17 @@
 @import "tailwindcss";
 
+@theme {
+  --color-navy-950: #060d1a;
+  --color-navy-900: #0a1628;
+  --color-navy-800: #0f1d32;
+  --color-navy-700: #1e3a5f;
+  --color-navy-600: #2c4b75;
+  --color-brand-blue: #3b82f6;
+  --color-brand-teal: #14b8a6;
+  --color-brand-light: #eff6ff;
+  --font-sans: 'Plus Jakarta Sans', sans-serif;
+}
+
 [data-theme="light"] {
   --bg: #FDF8F2;
   --bg2: #FAF3EB;

@@ -14,6 +14,7 @@ import LegitChecker from './pages/LegitChecker'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import AdvisorLayout from './components/AdvisorLayout'
+import Landing from './pages/Landing'
 
 function StudentLayout({ theme, toggleTheme }) {
   return (
@@ -95,6 +96,8 @@ export default function App() {
     <Routes>
       <Route path="/login"  element={session ? <Navigate to="/dashboard" /> : <Login />} />
       <Route path="/signup" element={session ? <Navigate to="/dashboard" /> : <Signup />} />
+      <Route path="/landing" element={<Landing theme={theme} toggleTheme={toggleTheme} />} />
+
       <Route
         path="/*"
         element={session
