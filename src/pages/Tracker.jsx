@@ -309,49 +309,43 @@ export default function Tracker() {
                         </div>
                       )}
 
-                      {/* Move Buttons */}
-                      <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', marginBottom: 8 }}>
-                        {Object.entries(COL_META).filter(([k]) => k !== colKey).map(([k, v]) => {
-                          if (k === 'results') {
-                            return (
-                              <div key={k} style={{ display: 'flex', gap: 4 }}>
-                                <button
-                                  onClick={() => moveCard({ ...card, resultType: 'accepted' }, 'results')}
-                                  style={{
-                                    padding: '3px 8px', borderRadius: 6, fontSize: 9, fontWeight: 700,
-                                    cursor: 'pointer', border: '1px solid var(--green)',
-                                    background: 'transparent', color: 'var(--green)',
-                                    fontFamily: 'Plus Jakarta Sans, sans-serif',
-                                  }}>
-                                  ✓ Accepted
-                                </button>
-                                <button
-                                  onClick={() => moveCard({ ...card, resultType: 'rejected' }, 'results')}
-                                  style={{
-                                    padding: '3px 8px', borderRadius: 6, fontSize: 9, fontWeight: 700,
-                                    cursor: 'pointer', border: '1px solid var(--red)',
-                                    background: 'transparent', color: 'var(--red)',
-                                    fontFamily: 'Plus Jakarta Sans, sans-serif',
-                                  }}>
-                                  ✗ Rejected
-                                </button>
-                              </div>
-                            )
-                          }
-                          return (
-                            <button key={k} onClick={() => moveCard(card, k)}
-                              style={{
-                                padding: '3px 8px', borderRadius: 6, fontSize: 9, fontWeight: 700,
-                                cursor: 'pointer', border: `1px solid ${v.color}`,
-                                background: 'transparent', color: v.color,
-                                fontFamily: 'Plus Jakarta Sans, sans-serif',
-                              }}>
-                              → {v.label}
-                            </button>
-                          )
-                        })}
-                      </div>
-
+                     {/* Result Badge — clickable to change */}
+{card.resultType && colKey === 'results' && (
+  <div style={{ marginBottom: 8 }}>
+    <div style={{
+      display: 'inline-flex', alignItems: 'center', gap: 4,
+      fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20, marginBottom: 6,
+      background: card.resultType === 'accepted' ? 'var(--green-light)' : 'var(--red-light)',
+      color: card.resultType === 'accepted' ? 'var(--green)' : 'var(--red)',
+    }}>
+      {card.resultType === 'accepted' ? '✓ Accepted' : '✗ Rejected'}
+    </div>
+    <div style={{ display: 'flex', gap: 4 }}>
+      <button
+        onClick={() => moveCard({ ...card, resultType: 'accepted' }, 'results')}
+        style={{
+          padding: '2px 7px', borderRadius: 6, fontSize: 9, fontWeight: 700,
+          cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
+          border: '1px solid var(--green)',
+          background: card.resultType === 'accepted' ? 'var(--green)' : 'transparent',
+          color: card.resultType === 'accepted' ? '#fff' : 'var(--green)',
+        }}>
+        ✓ Accepted
+      </button>
+      <button
+        onClick={() => moveCard({ ...card, resultType: 'rejected' }, 'results')}
+        style={{
+          padding: '2px 7px', borderRadius: 6, fontSize: 9, fontWeight: 700,
+          cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
+          border: '1px solid var(--red)',
+          background: card.resultType === 'rejected' ? 'var(--red)' : 'transparent',
+          color: card.resultType === 'rejected' ? '#fff' : 'var(--red)',
+        }}>
+        ✗ Rejected
+      </button>
+    </div>
+  </div>
+)}
                       {/* Progress Bar */}
                       <div style={{ height: 3, borderRadius: 2, background: 'var(--border)', overflow: 'hidden', marginBottom: 8 }}>
                         <div style={{
