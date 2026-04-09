@@ -9,11 +9,12 @@ export default function Signup() {
   const [step, setStep]       = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError]     = useState(null)
-  const [data, setData]       = useState({
-    name: '', email: '', password: '', role: 'student',
-    school: '', major: '', year: '', visa_status: '',
-    ethnicity: [], interests: [],
-  })
+  const [data, setData] = useState({
+  name: '', email: '', password: '', role: 'student',
+  school: '', major: '', year: '', visa_status: '',
+  ethnicity: [], interests: [], advisor_email: '',
+})
+  
 
   const toggle = (field, val) => {
     setData(d => ({
@@ -24,45 +25,64 @@ export default function Signup() {
     }))
   }
 
-  const handleSignup = async () => {
-    setLoading(true)
-    setError(null)
+ const handleSignup = async () => {
+  setLoading(true)
+  setError(null)
 
-    // 1. Create the auth user — trigger auto-creates the profile row
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-    })
+  // 1. Create auth user
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password,
+  })
 
-    if (authError) {
-      setError(authError.message)
-      setLoading(false)
-      return
-    }
-
-    // 2. Update the profile row with their full info
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
-        name:        data.name,
-        school:      data.school,
-        major:       data.major,
-        year:        data.year,
-        visa_status: data.visa_status,
-        ethnicity:   data.ethnicity,
-        interests:   data.interests,
-        role:        data.role,
-      })
-      .eq('id', authData.user.id)
-
-    if (profileError) {
-      setError(profileError.message)
-      setLoading(false)
-      return
-    }
-
-    navigate('/dashboard')
+  if (authError) {
+    setError(authError.message)
+    setLoading(false)
+    return
   }
+
+  // 2. Update profile
+  const { error: profileError } = await supabase
+    .from('profiles')
+    .update({
+      name:        data.name,
+      school:      data.school,
+      major:       data.major,
+      year:        data.year,
+      visa_status: data.visa_status,
+      ethnicity:   data.ethnicity,
+      interests:   data.interests,
+      role:        data.role,
+    })
+    .eq('id', authData.user.id)
+
+  if (profileError) {
+    setError(profileError.message)
+    setLoading(false)
+    return
+  }
+
+  // 3. If advisor email provided, link student to advisor
+  if (data.advisor_email && data.role === 'student') {
+    const { data: advisorProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', data.advisor_email)
+      .eq('role', 'advisor')
+      .single()
+
+    if (advisorProfile) {
+      await supabase
+        .from('advisor_students')
+        .insert({
+          advisor_id: advisorProfile.id,
+          student_id: authData.user.id,
+        })
+    }
+  }
+
+  navigate('/dashboard')
+}
 
   const inputStyle = {
     width: '100%', padding: '10px 14px',
@@ -200,6 +220,7 @@ export default function Signup() {
 
           {/* Step 1 — Academic */}
           {step === 1 && (
+            
             <div>
               <div style={{ marginBottom: 14 }}>
                 <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
@@ -210,6 +231,20 @@ export default function Signup() {
                   value={data.school} onChange={e => setData({ ...data, school: e.target.value })}
                 />
               </div>
+              <div style={{ marginBottom: 14 }}>
+  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
+    Advisor Email (optional)
+  </label>
+  <input
+    style={inputStyle}
+    placeholder="advisor@college.edu"
+    value={data.advisor_email}
+    onChange={e => setData({ ...data, advisor_email: e.target.value })}
+  />
+  <div style={{ fontSize: 10, color: 'var(--text2)', marginTop: 4 }}>
+    Enter your career advisor's email to connect with them
+  </div>
+</div>
               <div style={{ marginBottom: 14 }}>
                 <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
                   Major
