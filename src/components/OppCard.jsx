@@ -129,6 +129,7 @@ export default function OppCard({ opp, onShare, onCoverLetter }) {
               border: '1px solid rgba(252,211,77,0.3)',
             }}>Unverified</span>
           )}
+          
           {opp.sourceUrl && (
             <a>
               href={opp.sourceUrl}

@@ -35,7 +35,7 @@ const mapOpp = (o) => ({
   stipend:    o.stipend,
   visaStatus: o.visa_status,
   visaLabel:  o.visa_label,
-  sourceUrl:  o.source_url,
+  sourceUrl: o.source_url || null,
   verified:   o.verified,
 })
 
