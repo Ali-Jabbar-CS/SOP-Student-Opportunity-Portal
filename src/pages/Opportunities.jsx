@@ -18,16 +18,35 @@ const SIMILAR = [
   { title: 'Cisco ThingQbator',         org: 'Cisco',            match: 83, logo: '#0284C7', type: 'Fellowship',  visa: 'maybe' },
 ]
 
+const mapOpp = (o) => ({
+  id:         o.id,
+  title:      o.title,
+  org:        o.org,
+  type:       o.type,
+  match:      90,
+  tags:       o.tags || [],
+  deadline:   o.deadline,
+  urgent:     o.deadline_date
+    ? new Date(o.deadline_date) - new Date() < 7 * 24 * 60 * 60 * 1000
+    : false,
+  logo:       o.logo_color,
+  initials:   o.initials,
+  location:   o.location,
+  stipend:    o.stipend,
+  visaStatus: o.visa_status,
+  visaLabel:  o.visa_label,
+  sourceUrl:  o.source_url,
+  verified:   o.verified,
+})
+
 export default function Opportunities() {
   const navigate = useNavigate()
-
-  const [opps, setOpps]            = useState([])
-  const [loading, setLoading]      = useState(true)
+  const [opps, setOpps]             = useState([])
+  const [loading, setLoading]       = useState(true)
   const [typeFilter, setTypeFilter] = useState('all')
   const [visaFilter, setVisaFilter] = useState('all')
-  const [query, setQuery]          = useState('')
+  const [query, setQuery]           = useState('')
 
-  // Fetch from Supabase on mount
   useEffect(() => {
     const fetchOpps = async () => {
       setLoading(true)
@@ -37,18 +56,13 @@ export default function Opportunities() {
         .eq('is_active', true)
         .order('created_at', { ascending: false })
 
-      if (error) {
-        console.error('Error fetching opportunities:', error.message)
-      } else {
-        setOpps(data)
-      }
+      if (error) console.error('Error fetching opportunities:', error.message)
+      else setOpps(data)
       setLoading(false)
     }
-
     fetchOpps()
   }, [])
 
-  // Filter logic
   const filtered = opps.filter(o =>
     (typeFilter === 'all' || o.type === typeFilter) &&
     (visaFilter === 'all' || o.visa_status === visaFilter) &&
@@ -57,28 +71,10 @@ export default function Opportunities() {
       o.org.toLowerCase().includes(query.toLowerCase()))
   )
 
-  // Map Supabase row to the shape OppCard expects
- const mapOpp = (o) => ({
-  id:          o.id,
-  title:       o.title,
-  org:         o.org,
-  type:        o.type,
-  match:       90,
-  tags:        o.tags || [],
-  deadline:    o.deadline,
-  urgent:      o.deadline_date ? new Date(o.deadline_date) - new Date() < 7 * 24 * 60 * 60 * 1000 : false,
-  logo:        o.logo_color,
-  initials:    o.initials,
-  location:    o.location,
-  stipend:     o.stipend,
-  visaStatus:  o.visa_status,
-  visaLabel:   o.visa_label,
-})
-
   return (
     <div style={{ padding: '26px 30px' }}>
 
-      {/* Visa Filter Section */}
+      {/* Visa Filter */}
       <div style={{
         background: 'var(--surface)', border: '1px solid var(--border)',
         borderRadius: 14, padding: 16, marginBottom: 20,
@@ -89,8 +85,7 @@ export default function Opportunities() {
             Visa Compatibility Filter
           </h4>
           <span style={{
-            marginLeft: 'auto',
-            display: 'inline-flex', alignItems: 'center', gap: 4,
+            marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 4,
             background: 'var(--amber-light)', color: 'var(--amber)',
             border: '1px solid rgba(252,211,77,0.3)',
             fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20,
@@ -98,9 +93,7 @@ export default function Opportunities() {
         </div>
         <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
           {Object.entries(VISA_FILTERS).map(([key, label]) => (
-            <button
-              key={key}
-              onClick={() => setVisaFilter(key)}
+            <button key={key} onClick={() => setVisaFilter(key)}
               style={{
                 padding: '6px 14px', borderRadius: 20, fontSize: 11, fontWeight: 700,
                 cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
@@ -130,8 +123,7 @@ export default function Opportunities() {
         <div style={{ position: 'relative', flex: 1, maxWidth: 300 }}>
           <span style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', fontSize: 14 }}>🔍</span>
           <input
-            value={query}
-            onChange={e => setQuery(e.target.value)}
+            value={query} onChange={e => setQuery(e.target.value)}
             placeholder="Search opportunities, orgs..."
             style={{
               width: '100%', padding: '8px 14px 8px 34px',
@@ -142,9 +134,7 @@ export default function Opportunities() {
           />
         </div>
         {['all', 'internship', 'scholarship', 'grant', 'volunteering'].map(t => (
-          <button
-            key={t}
-            onClick={() => setTypeFilter(t)}
+          <button key={t} onClick={() => setTypeFilter(t)}
             style={{
               padding: '7px 15px', borderRadius: 20, fontSize: 12, fontWeight: 600,
               cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
@@ -175,23 +165,21 @@ export default function Opportunities() {
         )}
       </div>
 
-      {/* Loading State */}
+      {/* Cards */}
       {loading ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
           {[...Array(4)].map((_, i) => (
             <div key={i} style={{
               background: 'var(--surface)', border: '1px solid var(--border)',
-              borderRadius: 16, padding: 18, height: 180,
+              borderRadius: 16, padding: 18, height: 200,
               animation: 'pulse 1.5s ease-in-out infinite',
             }}>
               <style>{`@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }`}</style>
               <div style={{ width: '60%', height: 14, background: 'var(--border)', borderRadius: 7, marginBottom: 10 }} />
-              <div style={{ width: '40%', height: 10, background: 'var(--border)', borderRadius: 5, marginBottom: 16 }} />
-              <div style={{ width: '80%', height: 10, background: 'var(--border)', borderRadius: 5 }} />
+              <div style={{ width: '40%', height: 10, background: 'var(--border)', borderRadius: 5 }} />
             </div>
           ))}
         </div>
-
       ) : filtered.length > 0 ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 14 }}>
           {filtered.map(o => (
@@ -202,7 +190,6 @@ export default function Opportunities() {
             />
           ))}
         </div>
-
       ) : (
         <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text2)' }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>🔎</div>
@@ -213,7 +200,7 @@ export default function Opportunities() {
         </div>
       )}
 
-      {/* Similar Opportunities Strip */}
+      {/* Similar Strip */}
       <div style={{ marginTop: 32 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
           <h3 style={{ fontFamily: 'Sora, sans-serif', fontSize: 15, fontWeight: 700, color: 'var(--text)' }}>
@@ -228,12 +215,10 @@ export default function Opportunities() {
         </div>
         <div style={{ display: 'flex', gap: 10, overflowX: 'auto', paddingBottom: 4 }}>
           {SIMILAR.map((s, i) => (
-            <div
-              key={i}
-              style={{
-                minWidth: 200, background: 'var(--surface)', border: '1px solid var(--border)',
-                borderRadius: 12, padding: 13, cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s',
-              }}
+            <div key={i} style={{
+              minWidth: 200, background: 'var(--surface)', border: '1px solid var(--border)',
+              borderRadius: 12, padding: 13, cursor: 'pointer', flexShrink: 0, transition: 'all 0.15s',
+            }}
               onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--card-hover-border)'; e.currentTarget.style.boxShadow = 'var(--shadow)' }}
               onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.boxShadow = 'none' }}
             >

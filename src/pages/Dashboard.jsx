@@ -55,23 +55,25 @@ export default function Dashboard() {
   }
 
   const mapOpp = (o) => ({
-    id:         o.id,
-    title:      o.title,
-    org:        o.org,
-    type:       o.type,
-    match:      90,
-    tags:       o.tags || [],
-    deadline:   o.deadline,
-    urgent:     o.deadline_date
-      ? new Date(o.deadline_date) - new Date() < 7 * 24 * 60 * 60 * 1000
-      : false,
-    logo:       o.logo_color,
-    initials:   o.initials,
-    location:   o.location,
-    stipend:    o.stipend,
-    visaStatus: o.visa_status,
-    visaLabel:  o.visa_label,
-  })
+  id:         o.id,
+  title:      o.title,
+  org:        o.org,
+  type:       o.type,
+  match:      90,
+  tags:       o.tags || [],
+  deadline:   o.deadline,
+  urgent:     o.deadline_date
+    ? new Date(o.deadline_date) - new Date() < 7 * 24 * 60 * 60 * 1000
+    : false,
+  logo:       o.logo_color,
+  initials:   o.initials,
+  location:   o.location,
+  stipend:    o.stipend,
+  visaStatus: o.visa_status,
+  visaLabel:  o.visa_label,
+  sourceUrl:  o.source_url,
+  verified:   o.verified,
+})
 
   const activeApps    = apps.filter(a => a.status !== 'results').length
   const interviews    = apps.filter(a => a.status === 'results').length

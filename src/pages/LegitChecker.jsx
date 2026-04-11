@@ -59,6 +59,25 @@ export default function LegitChecker() {
   return (
     <div style={{ padding: '26px 30px' }}>
 
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+  <h2 style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>
+    Is This Legit? Checker
+  </h2>
+  <span style={{
+    display: 'inline-flex', alignItems: 'center', gap: 4,
+    background: 'var(--amber-light)', color: 'var(--amber)',
+    border: '1px solid rgba(252,211,77,0.3)',
+    fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20,
+  }}>AI Scam Detection</span>
+</div>
+<p style={{ fontSize: 12, color: 'var(--text2)', marginBottom: 24, lineHeight: 1.6 }}>
+  Paste an opportunity description, URL, or email to check if it is legitimate.
+  Our AI scans for red flags like fake scholarships, scam internships, and suspicious
+  postings that target international students. Note: opportunities marked
+  <strong style={{ color: 'var(--green)' }}> Verified Live</strong> on SOP have been
+  manually confirmed on the organization official website.
+</p>
+
       {/* Header */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
         <h2 style={{ fontFamily: 'Sora, sans-serif', fontSize: 18, fontWeight: 700, color: 'var(--text)' }}>
