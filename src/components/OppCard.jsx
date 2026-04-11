@@ -131,16 +131,8 @@ export default function OppCard({ opp, onShare, onCoverLetter }) {
           )}
           
           {opp.sourceUrl && (
-            <a>
-              href={opp.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={e => e.stopPropagation()}
-              style={{ fontSize: 10, fontWeight: 700, color: 'var(--blue)', textDecoration: 'none' }}
-            
-              View on Official Site
-            </a>
-          )}
+  <a href={opp.sourceUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: 10, fontWeight: 700, color: 'var(--blue)', textDecoration: 'none' }}>View on Official Site</a>
+)}
         </div>
 
         {tracking && (
