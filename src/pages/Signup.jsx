@@ -57,7 +57,10 @@ export default function Signup() {
     options: {
       data: {
         name:        data.name,
-        school:      isAdvisor ? data.institution : data.school,
+        school: isAdvisor
+  ? (data.institution === 'Other' ? data.customSchool : data.institution)
+  : (data.school === 'Other' ? data.customSchool : data.school),
+major: data.major === 'Other' ? data.customMajor : data.major,
         major:       data.major,
         year:        data.year,
         visa_status: data.visa_status,
@@ -276,29 +279,45 @@ export default function Signup() {
           {step === 1 && !isAdvisor && (
             <div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>University / College</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>University / College <span style={{ color: 'var(--red)' }}>*</span></label>
                 <select style={{ ...inputStyle, cursor: 'pointer' }} value={data.school} onChange={e => setData({ ...data, school: e.target.value })}>
                   <option value="">Select your school...</option>
                   {SCHOOLS.map(s => <option key={s}>{s}</option>)}
                 </select>
+                {data.school === 'Other' && (
+                  <input
+                    style={{ ...inputStyle, marginTop: 8 }}
+                    placeholder="Enter your school name"
+                    value={data.customSchool || ''}
+                    onChange={e => setData({ ...data, customSchool: e.target.value })}
+                  />
+                )}
               </div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Major</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Major <span style={{ color: 'var(--red)' }}>*</span></label>
                 <select style={{ ...inputStyle, cursor: 'pointer' }} value={data.major} onChange={e => setData({ ...data, major: e.target.value })}>
                   <option value="">Select your major...</option>
                   {MAJORS.map(m => <option key={m}>{m}</option>)}
                 </select>
+                {data.major === 'Other' && (
+                  <input
+                    style={{ ...inputStyle, marginTop: 8 }}
+                    placeholder="Enter your major"
+                    value={data.customMajor || ''}
+                    onChange={e => setData({ ...data, customMajor: e.target.value })}
+                  />
+                )}
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 14 }}>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Year</label>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Year <span style={{ color: 'var(--red)' }}>*</span></label>
                   <select style={{ ...inputStyle, cursor: 'pointer' }} value={data.year} onChange={e => setData({ ...data, year: e.target.value })}>
                     <option value="">Select...</option>
                     {['Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate'].map(y => <option key={y}>{y}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Visa Status</label>
+                  <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Visa Status <span style={{ color: 'var(--red)' }}>*</span></label>
                   <select style={{ ...inputStyle, cursor: 'pointer' }} value={data.visa_status} onChange={e => setData({ ...data, visa_status: e.target.value })}>
                     <option value="">Select...</option>
                     {['US Citizen', 'Permanent Resident', 'F-1 International', 'J-1 Exchange', 'OPT/STEM OPT', 'CPT', 'DACA'].map(v => <option key={v}>{v}</option>)}
@@ -317,14 +336,22 @@ export default function Signup() {
           {step === 1 && isAdvisor && (
             <div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Institution / College</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Institution / College <span style={{ color: 'var(--red)' }}>*</span></label>
                 <select style={{ ...inputStyle, cursor: 'pointer' }} value={data.institution} onChange={e => setData({ ...data, institution: e.target.value })}>
                   <option value="">Select your institution...</option>
                   {SCHOOLS.map(s => <option key={s}>{s}</option>)}
                 </select>
+                {data.institution === 'Other' && (
+                  <input
+                    style={{ ...inputStyle, marginTop: 8 }}
+                    placeholder="Enter your institution name"
+                    value={data.customSchool || ''}
+                    onChange={e => setData({ ...data, customSchool: e.target.value })}
+                  />
+                )}
               </div>
               <div style={{ marginBottom: 14 }}>
-                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Your Title</label>
+                <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>Your Title <span style={{ color: 'var(--red)' }}>*</span></label>
                 <select style={{ ...inputStyle, cursor: 'pointer' }} value={data.advisor_title} onChange={e => setData({ ...data, advisor_title: e.target.value })}>
                   <option value="">Select your role...</option>
                   {['Career Advisor', 'Academic Counselor', 'Department Advisor', 'Financial Aid Advisor', 'International Student Advisor', 'Faculty Member', 'Program Coordinator', 'Other'].map(t => <option key={t}>{t}</option>)}
