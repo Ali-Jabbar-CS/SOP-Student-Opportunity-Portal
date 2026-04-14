@@ -379,10 +379,10 @@ export default function Signup() {
             </div>
           )}
 
-          {/* Navigation */}
+ {/* Navigation */}
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 24 }}>
             {step > 0 ? (
-              <button onClick={() => setStep(s => s - 1)}
+              <button onClick={() => { setError(null); setStep(s => s - 1) }}
                 style={{
                   padding: '9px 20px', borderRadius: 10, fontSize: 13, fontWeight: 600,
                   cursor: 'pointer', border: '1.5px solid var(--border)',
@@ -392,7 +392,32 @@ export default function Signup() {
             ) : <div />}
 
             {step < STEPS.length - 1 ? (
-              <button onClick={() => setStep(s => s + 1)}
+              <button onClick={() => {
+                if (step === 0) {
+                  if (!data.name || !data.email || !data.password) {
+                    setError('Please fill in your name, email and password.')
+                    return
+                  }
+                  if (data.password.length < 6) {
+                    setError('Password must be at least 6 characters.')
+                    return
+                  }
+                }
+                if (step === 1 && !isAdvisor) {
+                  if (!data.school || !data.major || !data.year || !data.visa_status) {
+                    setError('Please fill in all required academic fields.')
+                    return
+                  }
+                }
+                if (step === 1 && isAdvisor) {
+                  if (!data.institution || !data.advisor_title) {
+                    setError('Please select your institution and title.')
+                    return
+                  }
+                }
+                setError(null)
+                setStep(s => s + 1)
+              }}
                 style={{
                   padding: '9px 24px', borderRadius: 10, fontSize: 13, fontWeight: 700,
                   cursor: 'pointer', border: 'none',
@@ -400,7 +425,20 @@ export default function Signup() {
                   fontFamily: 'Plus Jakarta Sans, sans-serif',
                 }}>Next</button>
             ) : (
-              <button onClick={handleSignup} disabled={loading}
+              <button onClick={() => {
+                if (!isAdvisor) {
+                  if (data.ethnicity.length === 0) {
+                    setError('Please select at least one background option.')
+                    return
+                  }
+                  if (data.interests.length === 0) {
+                    setError('Please select at least one interest.')
+                    return
+                  }
+                }
+                setError(null)
+                handleSignup()
+              }} disabled={loading}
                 style={{
                   padding: '9px 24px', borderRadius: 10, fontSize: 13, fontWeight: 700,
                   cursor: loading ? 'not-allowed' : 'pointer', border: 'none',
