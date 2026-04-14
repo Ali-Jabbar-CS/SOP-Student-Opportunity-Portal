@@ -47,64 +47,55 @@ export default function Signup() {
     }))
   }
 
-  const handleSignup = async () => {
-    setLoading(true)
-    setError(null)
+ const handleSignup = async () => {
+  setLoading(true)
+  setError(null)
 
-    const { data: authData, error: authError } = await supabase.auth.signUp({
-      email: data.email,
-      password: data.password,
-    })
-
-    if (authError) {
-      setError(authError.message)
-      setLoading(false)
-      return
-    }
-
-    await new Promise(resolve => setTimeout(resolve, 1500))
-
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({
+  const { data: authData, error: authError } = await supabase.auth.signUp({
+    email: data.email,
+    password: data.password,
+    options: {
+      data: {
         name:        data.name,
         school:      isAdvisor ? data.institution : data.school,
         major:       data.major,
         year:        data.year,
         visa_status: data.visa_status,
-        ethnicity:   data.ethnicity,
-        interests:   data.interests,
+        ethnicity:   JSON.stringify(data.ethnicity),
+        interests:   JSON.stringify(data.interests),
         role:        data.role,
-      })
-      .eq('id', authData.user.id)
-
-    if (profileError) {
-      setError(profileError.message)
-      setLoading(false)
-      return
-    }
-
-    if (data.advisor_email && !isAdvisor) {
-      const { data: advisorProfile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('email', data.advisor_email.toLowerCase().trim())
-        .eq('role', 'advisor')
-        .single()
-
-      if (advisorProfile) {
-        await supabase
-          .from('advisor_students')
-          .insert({
-            advisor_id: advisorProfile.id,
-            student_id: authData.user.id,
-          })
       }
     }
+  })
 
-    setEmailSent(true)
+  if (authError) {
+    setError(authError.message)
     setLoading(false)
+    return
   }
+
+  // Link to advisor if email provided
+  if (data.advisor_email && !isAdvisor && authData.user) {
+    const { data: advisorProfile } = await supabase
+      .from('profiles')
+      .select('id')
+      .eq('email', data.advisor_email.toLowerCase().trim())
+      .eq('role', 'advisor')
+      .single()
+
+    if (advisorProfile) {
+      await supabase
+        .from('advisor_students')
+        .insert({
+          advisor_id: advisorProfile.id,
+          student_id: authData.user.id,
+        })
+    }
+  }
+
+  setEmailSent(true)
+  setLoading(false)
+}
 
   const inputStyle = {
     width: '100%', padding: '10px 14px',
