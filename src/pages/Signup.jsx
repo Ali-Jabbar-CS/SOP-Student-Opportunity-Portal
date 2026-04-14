@@ -29,7 +29,6 @@ export default function Signup() {
   setLoading(true)
   setError(null)
 
-  // 1. Create auth user
   const { data: authData, error: authError } = await supabase.auth.signUp({
     email: data.email,
     password: data.password,
@@ -41,7 +40,9 @@ export default function Signup() {
     return
   }
 
-  // 2. Update profile
+  // Wait for session to be established
+  await new Promise(resolve => setTimeout(resolve, 1500))
+
   const { error: profileError } = await supabase
     .from('profiles')
     .update({
@@ -62,12 +63,12 @@ export default function Signup() {
     return
   }
 
-  // 3. If advisor email provided, link student to advisor
+  // Link to advisor if email provided
   if (data.advisor_email && data.role === 'student') {
     const { data: advisorProfile } = await supabase
       .from('profiles')
       .select('id')
-      .eq('email', data.advisor_email)
+      .eq('email', data.advisor_email.toLowerCase().trim())
       .eq('role', 'advisor')
       .single()
 
