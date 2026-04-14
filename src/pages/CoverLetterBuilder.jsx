@@ -23,12 +23,12 @@ export default function CoverLetterBuilder({ opp }) {
     tone < 55 ? 'Balanced' :
     tone < 80 ? 'Warm & Conversational' : 'Casual & Friendly'
 
-  const selectedOpp = opp || {
-    title: 'Software Engineering Intern',
-    org: 'NASA Jet Propulsion Lab',
-    location: 'Pasadena, CA',
-    type: 'internship',
-  }
+ const selectedOpp = opp || {
+  title: 'General Opportunity',
+  org: 'Your Target Organization',
+  location: 'Various',
+  type: 'internship',
+}
 
   const generate = async () => {
     setGen(true)

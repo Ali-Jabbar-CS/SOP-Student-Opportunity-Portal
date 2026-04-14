@@ -1,10 +1,10 @@
-export default async (req, context) => {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    const { input, url } = await req.json()
+    const { input, url } = req.body
     const content = input || url
 
     const prompt = `You are a fraud detection expert helping international students identify scam internships, fake scholarships, and fraudulent job postings.
@@ -49,15 +49,8 @@ Check for: upfront fees, vague descriptions, non-official email domains, unreali
     const text = data.content[0].text
     const result = JSON.parse(text)
 
-    return new Response(JSON.stringify(result), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(200).json(result)
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(500).json({ error: err.message })
   }
 }
-

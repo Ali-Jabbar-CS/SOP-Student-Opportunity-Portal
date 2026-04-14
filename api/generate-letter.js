@@ -1,10 +1,10 @@
-export default async (req, context) => {
+export default async function handler(req, res) {
   if (req.method !== 'POST') {
-    return new Response('Method not allowed', { status: 405 })
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
   try {
-    const { profile, opp, tone, stage } = await req.json()
+    const { profile, opp, tone, stage } = req.body
 
     const toneLabel =
       tone < 30 ? 'formal and professional' :
@@ -45,15 +45,8 @@ Write a ${stage} in a ${toneLabel} tone. Make it personal, specific to this oppo
     const data = await response.json()
     const letter = data.content[0].text
 
-    return new Response(JSON.stringify({ letter }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(200).json({ letter })
   } catch (err) {
-    return new Response(JSON.stringify({ error: err.message }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' },
-    })
+    return res.status(500).json({ error: err.message })
   }
 }
-
