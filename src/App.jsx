@@ -16,7 +16,6 @@ import Signup from './pages/Signup'
 import AdvisorLayout from './components/AdvisorLayout'
 import Landing from './pages/Landing'
 import Profile from './pages/Profile'
-import PageTransition from './components/PageTransition'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 
