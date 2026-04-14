@@ -39,7 +39,7 @@ const mapOpp = (o) => ({
   verified:   o.verified,
 })
 
-export default function Opportunities() {
+export default function Opportunities({ setSelectedOpp }) {
   const navigate = useNavigate()
   const [opps, setOpps]             = useState([])
   const [loading, setLoading]       = useState(true)
@@ -186,7 +186,10 @@ export default function Opportunities() {
             <OppCard
               key={o.id}
               opp={mapOpp(o)}
-              onCoverLetter={() => navigate('/cover-letter')}
+             onCoverLetter={(o) => {
+  setSelectedOpp(o)
+  navigate('/cover-letter')
+}}
             />
           ))}
         </div>

@@ -47,7 +47,8 @@ Check for: upfront fees, vague descriptions, non-official email domains, unreali
 
     const data = await response.json()
     const text = data.content[0].text
-    const result = JSON.parse(text)
+    const cleaned = text.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim()
+const result = JSON.parse(cleaned)
 
     return res.status(200).json(result)
   } catch (err) {

@@ -17,7 +17,7 @@ import AdvisorLayout from './components/AdvisorLayout'
 import Landing from './pages/Landing'
 import Profile from './pages/Profile'
 
-function StudentLayout({ theme, toggleTheme }) {
+function StudentLayout({ theme, toggleTheme, selectedOpp, setSelectedOpp }) {
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar theme={theme} toggleTheme={toggleTheme} />
@@ -25,14 +25,14 @@ function StudentLayout({ theme, toggleTheme }) {
         <Topbar />
         <Routes>
           <Route path="/dashboard"     element={<Dashboard />} />
-          <Route path="/opportunities" element={<Opportunities />} />
+          <Route path="/opportunities" element={<Opportunities setSelectedOpp={setSelectedOpp} />} />
           <Route path="/tracker"       element={<Tracker />} />
           <Route path="/recruiters"    element={<Recruiters />} />
-          <Route path="/cover-letter"  element={<CoverLetterBuilder />} />
+          <Route path="/cover-letter"  element={<CoverLetterBuilder opp={selectedOpp} />} />
           <Route path="/legit-check"   element={<LegitChecker />} />
           <Route path="/notifications" element={<Notifications />} />
+          <Route path="/profile"       element={<Profile />} />
           <Route path="*"              element={<Navigate to="/dashboard" />} />
-          <Route path="/profile" element={<Profile />} />
         </Routes>
       </div>
     </div>
@@ -41,6 +41,7 @@ function StudentLayout({ theme, toggleTheme }) {
 
 function AuthenticatedApp({ theme, toggleTheme }) {
   const { profile, loading } = useUser()
+  const [selectedOpp, setSelectedOpp] = useState(null)
 
   if (loading) return null
 
@@ -48,7 +49,7 @@ function AuthenticatedApp({ theme, toggleTheme }) {
     return <AdvisorLayout theme={theme} toggleTheme={toggleTheme} />
   }
 
-  return <StudentLayout theme={theme} toggleTheme={toggleTheme} />
+  return <StudentLayout theme={theme} toggleTheme={toggleTheme} selectedOpp={selectedOpp} setSelectedOpp={setSelectedOpp} />
 }
 
 export default function App() {

@@ -215,8 +215,8 @@ export default function OppCard({ opp, onShare, onCoverLetter }) {
               }}>
               AI Letter
             </button>
-            <button
-              onClick={e => { e.stopPropagation(); setTracking(!tracking) }}
+           <button
+  onClick={e => { e.stopPropagation(); onCoverLetter && onCoverLetter(opp) }}
               style={{
                 background: tracking ? 'var(--surface3)' : 'var(--navy)',
                 color: tracking ? 'var(--text2)' : 'var(--bg)',
