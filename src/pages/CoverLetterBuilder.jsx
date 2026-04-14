@@ -1,41 +1,72 @@
 import { useState } from 'react'
+import { useUser } from '../context/UserContext'
 
 const STAGES = [
-  { k: 'letter',   icon: '📝', name: 'Cover Letter',  desc: 'Standard application' },
-  { k: 'email',    icon: '✉️', name: 'Cold Email',     desc: 'Direct outreach' },
-  { k: 'essay',    icon: '🎓', name: 'Personal Essay', desc: 'Scholarship focus' },
-  { k: 'linkedin', icon: '💼', name: 'LinkedIn Note',  desc: 'Short & punchy' },
+  { k: 'cover letter',   icon: '📝', name: 'Cover Letter',  desc: 'Standard application' },
+  { k: 'cold email',     icon: '✉️', name: 'Cold Email',     desc: 'Direct outreach' },
+  { k: 'personal essay', icon: '🎓', name: 'Personal Essay', desc: 'Scholarship focus' },
+  { k: 'LinkedIn note',  icon: '💼', name: 'LinkedIn Note',  desc: 'Short & punchy' },
 ]
 
-const SAMPLE_LETTER = `Dear NASA Jet Propulsion Lab Hiring Team,
-
-I am writing to express my strong interest in the Software Engineering Intern position at NASA JPL. As a junior studying Computer Science at San Diego State University, I bring a combination of technical skills and lived experience that I believe will contribute meaningfully to your team.
-
-Throughout my academic career, I have developed proficiency in Python, Java, and data structures, with hands-on experience in machine learning through research projects at SDSU's AI lab. As an international student navigating a new country while pursuing a STEM degree, I have developed exceptional adaptability, problem-solving under uncertainty, and the drive to excel in every opportunity I am given.
-
-I am particularly drawn to NASA JPL's commitment to innovation and its welcoming environment for students from diverse backgrounds. The Software Engineering Intern role would allow me to apply my academic knowledge in a real-world setting while contributing fresh perspectives to your team.
-
-I would be grateful for the opportunity to discuss how my background and skills align with NASA JPL's mission. Thank you for your time and consideration.
-
-Warm regards,
-Maria Rodriguez
-maria@sdsu.edu | SDSU, Computer Science '26 | F-1 Student`
-
-export default function CoverLetterBuilder() {
-  const [stage, setStage]         = useState('letter')
+export default function CoverLetterBuilder({ opp }) {
+  const { profile } = useUser()
+  const [stage, setStage]         = useState('cover letter')
   const [tone, setTone]           = useState(60)
   const [generating, setGen]      = useState(false)
   const [generated, setGenerated] = useState(false)
+  const [letter, setLetter]       = useState('')
+  const [error, setError]         = useState(null)
+  const [copied, setCopied]       = useState(false)
 
   const toneLabel =
     tone < 30 ? 'Formal & Professional' :
     tone < 55 ? 'Balanced' :
     tone < 80 ? 'Warm & Conversational' : 'Casual & Friendly'
 
-  const generate = () => {
+  const selectedOpp = opp || {
+    title: 'Software Engineering Intern',
+    org: 'NASA Jet Propulsion Lab',
+    location: 'Pasadena, CA',
+    type: 'internship',
+  }
+
+  const generate = async () => {
     setGen(true)
     setGenerated(false)
-    setTimeout(() => { setGen(false); setGenerated(true) }, 2200)
+    setError(null)
+    setLetter('')
+
+    try {
+      const res = await fetch('/api/generate-letter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          profile: profile || {},
+          opp: selectedOpp,
+          tone,
+          stage,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (data.error) {
+        setError(data.error)
+      } else {
+        setLetter(data.letter)
+        setGenerated(true)
+      }
+    } catch (err) {
+      setError('Failed to generate letter. Please try again.')
+    }
+
+    setGen(false)
+  }
+
+  const copyLetter = () => {
+    navigator.clipboard.writeText(letter)
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -48,7 +79,7 @@ export default function CoverLetterBuilder() {
             AI Cover Letter Builder
           </h2>
           <p style={{ fontSize: 12, color: 'var(--text2)', marginTop: 2 }}>
-            Your profile is auto-loaded — just pick a type and generate
+            Generating for: <strong>{selectedOpp.title}</strong> at {selectedOpp.org}
           </p>
         </div>
         <span style={{
@@ -57,26 +88,22 @@ export default function CoverLetterBuilder() {
           background: 'var(--amber-light)', color: 'var(--amber)',
           border: '1px solid rgba(252,211,77,0.3)',
           fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20,
-        }}>✦ Powered by Claude AI</span>
+        }}>Powered by Claude AI</span>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '360px 1fr', gap: 20, alignItems: 'start' }}>
 
-        {/* Left — Form */}
+        {/* Left Form */}
         <div style={{
           background: 'var(--surface)', border: '1px solid var(--border)',
           borderRadius: 16, overflow: 'hidden', position: 'sticky', top: 80,
         }}>
-          <div style={{
-            padding: '18px 20px',
-            background: 'linear-gradient(130deg, #1A2B4A, #243659)',
-            borderBottom: '1px solid var(--border)',
-          }}>
+          <div style={{ padding: '18px 20px', background: 'linear-gradient(130deg, #1A2B4A, #243659)' }}>
             <h3 style={{ fontSize: 15, fontWeight: 700, color: '#fff', marginBottom: 2, fontFamily: 'Sora, sans-serif' }}>
               Customize Your Letter
             </h3>
             <p style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
-              Profile auto-loaded from your SOP account
+              Profile auto-loaded: {profile?.name || 'Complete your profile for better results'}
             </p>
           </div>
 
@@ -89,13 +116,11 @@ export default function CoverLetterBuilder() {
               </label>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
                 {STAGES.map(s => (
-                  <button
-                    key={s.k}
-                    onClick={() => setStage(s.k)}
+                  <button key={s.k} onClick={() => setStage(s.k)}
                     style={{
                       padding: '10px 12px', borderRadius: 10, textAlign: 'left',
                       cursor: 'pointer', fontFamily: 'Plus Jakarta Sans, sans-serif',
-                      border: `1.5px solid ${stage === s.k ? 'var(--amber)' : 'var(--border)'}`,
+                      border: stage === s.k ? '1.5px solid var(--amber)' : '1.5px solid var(--border)',
                       background: stage === s.k ? 'var(--amber-light)' : 'var(--surface)',
                       transition: 'all 0.15s',
                     }}>
@@ -124,61 +149,35 @@ export default function CoverLetterBuilder() {
               />
             </div>
 
-            {/* Highlight */}
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
-                Highlight (optional)
-              </label>
-              <textarea
-                placeholder="Any specific projects, skills, or experiences to emphasize..."
-                style={{
-                  width: '100%', minHeight: 80, padding: '10px 13px',
-                  border: '1.5px solid var(--border)', borderRadius: 9,
-                  fontSize: 12, fontFamily: 'Plus Jakarta Sans, sans-serif',
-                  color: 'var(--text)', background: 'var(--surface2)',
-                  outline: 'none', resize: 'vertical', lineHeight: 1.6,
-                }}
-              />
-            </div>
-
-            {/* Language */}
-            <div style={{ marginBottom: 18 }}>
-              <label style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)', display: 'block', marginBottom: 6 }}>
-                Output Language
-              </label>
-              <select style={{
-                width: '100%', padding: '9px 13px',
-                border: '1.5px solid var(--border)', borderRadius: 9,
-                fontSize: 13, fontFamily: 'Plus Jakarta Sans, sans-serif',
-                color: 'var(--text)', background: 'var(--surface)', cursor: 'pointer',
-              }}>
-                <option>English</option>
-                <option>Spanish (bilingual)</option>
-                <option>Formal Spanish</option>
-              </select>
+            {/* Opportunity Info */}
+            <div style={{ marginBottom: 18, background: 'var(--surface3)', borderRadius: 10, padding: 12 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--text)', marginBottom: 4 }}>Applying for:</div>
+              <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--text)' }}>{selectedOpp.title}</div>
+              <div style={{ fontSize: 11, color: 'var(--text2)' }}>{selectedOpp.org}</div>
             </div>
 
             {/* Generate Button */}
             <button
               onClick={generate}
+              disabled={generating}
               style={{
                 width: '100%', padding: '10px 0', borderRadius: 9,
-                background: 'var(--amber)', color: '#fff', border: 'none',
-                fontSize: 13, fontWeight: 700, cursor: 'pointer',
+                background: generating ? 'var(--border)' : 'var(--amber)',
+                color: generating ? 'var(--text3)' : '#fff', border: 'none',
+                fontSize: 13, fontWeight: 700, cursor: generating ? 'not-allowed' : 'pointer',
                 fontFamily: 'Plus Jakarta Sans, sans-serif',
                 display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
               }}>
-              ✦ Generate Letter
+              {generating ? 'Claude is writing...' : 'Generate Letter'}
             </button>
           </div>
         </div>
 
-        {/* Right — Preview */}
+        {/* Right Preview */}
         <div style={{
           background: 'var(--surface)', border: '1px solid var(--border)',
           borderRadius: 16, overflow: 'hidden',
         }}>
-          {/* Preview Header */}
           <div style={{
             padding: '16px 20px', borderBottom: '1px solid var(--border)',
             display: 'flex', alignItems: 'center', justifyContent: 'space-between',
@@ -192,12 +191,24 @@ export default function CoverLetterBuilder() {
                 background: 'var(--amber-light)', color: 'var(--amber)',
                 border: '1px solid rgba(252,211,77,0.3)',
                 fontSize: 10, fontWeight: 800, padding: '3px 9px', borderRadius: 20,
-              }}>✦ AI Generated</span>
+              }}>AI Generated</span>
             )}
           </div>
 
-          {/* States */}
-          {generating ? (
+          {/* Error */}
+          {error && (
+            <div style={{
+              margin: 20, padding: '12px 16px', borderRadius: 10,
+              background: 'var(--red-light)', color: 'var(--red)',
+              fontSize: 12, fontWeight: 600,
+              border: '1px solid rgba(248,113,113,0.3)',
+            }}>
+              Error: {error}
+            </div>
+          )}
+
+          {/* Generating spinner */}
+          {generating && (
             <div style={{
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               gap: 12, padding: '80px 20px', color: 'var(--text2)', fontSize: 13,
@@ -208,44 +219,43 @@ export default function CoverLetterBuilder() {
                 border: '2px solid var(--border)', borderTopColor: 'var(--amber)',
                 animation: 'spin 0.7s linear infinite', flexShrink: 0,
               }} />
-              Claude is writing your letter…
+              Claude is writing your {stage}...
             </div>
+          )}
 
-          ) : generated ? (
+          {/* Generated letter */}
+          {generated && !generating && (
             <>
-              <div style={{ padding: 24, fontSize: 13, lineHeight: 1.9, color: 'var(--text2)', minHeight: 420 }}>
-                {SAMPLE_LETTER.split('\n\n').map((p, i) => (
-                  <p key={i} style={{ marginBottom: 14 }}>{p}</p>
-                ))}
+              <div style={{ padding: 24, fontSize: 13, lineHeight: 1.9, color: 'var(--text2)', minHeight: 420, whiteSpace: 'pre-wrap' }}>
+                {letter}
               </div>
               <div style={{ padding: '16px 20px', borderTop: '1px solid var(--border)', display: 'flex', gap: 8 }}>
-                <button style={{
-                  padding: '8px 16px', borderRadius: 9, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                  background: 'var(--blue)', color: '#fff', border: 'none',
-                  fontFamily: 'Plus Jakarta Sans, sans-serif',
-                }}>📋 Copy Letter</button>
-                <button style={{
-                  padding: '8px 16px', borderRadius: 9, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                  background: 'transparent', color: 'var(--text2)', border: '1.5px solid var(--border)',
-                  fontFamily: 'Plus Jakarta Sans, sans-serif',
-                }}>⬇ Download PDF</button>
+                <button
+                  onClick={copyLetter}
+                  style={{
+                    padding: '8px 16px', borderRadius: 9, fontSize: 12, fontWeight: 600,
+                    cursor: 'pointer', border: 'none',
+                    background: copied ? 'var(--green)' : 'var(--blue)', color: '#fff',
+                    fontFamily: 'Plus Jakarta Sans, sans-serif', transition: 'background 0.2s',
+                  }}>
+                  {copied ? 'Copied!' : 'Copy Letter'}
+                </button>
                 <button
                   onClick={generate}
                   style={{
-                    padding: '8px 16px', borderRadius: 9, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                    background: 'transparent', color: 'var(--text2)', border: '1.5px solid var(--border)',
+                    padding: '8px 16px', borderRadius: 9, fontSize: 12, fontWeight: 600,
+                    cursor: 'pointer', border: '1.5px solid var(--border)',
+                    background: 'transparent', color: 'var(--text2)',
                     fontFamily: 'Plus Jakarta Sans, sans-serif',
-                  }}>↺ Regenerate</button>
-                <button style={{
-                  marginLeft: 'auto', padding: '8px 16px', borderRadius: 9,
-                  fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                  background: 'var(--teal)', color: '#fff', border: 'none',
-                  fontFamily: 'Plus Jakarta Sans, sans-serif',
-                }}>Apply with This →</button>
+                  }}>
+                  Regenerate
+                </button>
               </div>
             </>
+          )}
 
-          ) : (
+          {/* Empty state */}
+          {!generating && !generated && !error && (
             <div style={{
               display: 'flex', flexDirection: 'column', alignItems: 'center',
               justifyContent: 'center', padding: '80px 20px', textAlign: 'center',
@@ -255,7 +265,7 @@ export default function CoverLetterBuilder() {
                 Ready to write
               </div>
               <div style={{ fontSize: 12, color: 'var(--text2)', maxWidth: 260, lineHeight: 1.6 }}>
-                Choose your settings on the left and hit Generate — your personalized letter will appear here in seconds.
+                Choose your settings on the left and hit Generate — Claude will write your personalized letter in seconds.
               </div>
             </div>
           )}
