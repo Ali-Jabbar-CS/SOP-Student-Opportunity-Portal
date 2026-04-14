@@ -269,12 +269,20 @@ export default function LegitChecker() {
 
               {/* Actions */}
               <div style={{ padding: '14px 20px', borderTop: '1px solid var(--border)', display: 'flex', gap: 8 }}>
-                <button style={{
-                  padding: '7px 14px', borderRadius: 9, fontSize: 12, fontWeight: 600,
-                  cursor: 'pointer', border: '1.5px solid var(--border)',
-                  background: 'transparent', color: 'var(--text2)',
-                  fontFamily: 'Plus Jakarta Sans, sans-serif',
-                }}>Report This Posting</button>
+                <button
+  onClick={() => {
+    const subject = encodeURIComponent('Scam Opportunity Report - SOP')
+    const body = encodeURIComponent('I would like to report the following opportunity as potentially fraudulent:\n\n' + (input || url) + '\n\nPlease investigate.')
+    window.open('mailto:report@sop-portal.com?subject=' + subject + '&body=' + body)
+  }}
+  style={{
+    padding: '7px 14px', borderRadius: 9, fontSize: 12, fontWeight: 600,
+    cursor: 'pointer', border: '1.5px solid var(--border)',
+    background: 'transparent', color: 'var(--text2)',
+    fontFamily: 'Plus Jakarta Sans, sans-serif',
+  }}>
+  Report This Posting
+</button>
                 {result.verdict === 'safe' && (
                   <button style={{
                     marginLeft: 'auto', padding: '7px 14px', borderRadius: 9,
