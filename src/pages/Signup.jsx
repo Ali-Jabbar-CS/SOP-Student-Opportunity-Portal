@@ -165,7 +165,7 @@ export default function Signup() {
                   Full Name
                 </label>
                 <input
-                  style={inputStyle} placeholder="Maria Rodriguez"
+                  style={inputStyle} placeholder="First & Last Name"
                   value={data.name} onChange={e => setData({ ...data, name: e.target.value })}
                 />
               </div>
