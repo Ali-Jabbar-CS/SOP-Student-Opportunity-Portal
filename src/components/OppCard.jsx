@@ -130,9 +130,15 @@ export default function OppCard({ opp, onShare, onCoverLetter }) {
             }}>Unverified</span>
           )}
           
-          {opp.sourceUrl && (
-  <a href={opp.sourceUrl} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: 10, fontWeight: 700, color: 'var(--blue)', textDecoration: 'none' }}>View on Official Site</a>
-)}
+          {(() => {
+  const searchUrl = 'https://www.google.com/search?q=' + encodeURIComponent(opp.title + ' ' + opp.org + ' ' + (new Date().getFullYear()))
+  const url = opp.sourceUrl || searchUrl
+  return (
+    <a href={url} target="_blank" rel="noopener noreferrer" onClick={e => e.stopPropagation()} style={{ fontSize: 10, fontWeight: 700, color: 'var(--blue)', textDecoration: 'none' }}>
+      {opp.sourceUrl ? 'View Official Page' : 'Search This Opportunity'}
+    </a>
+  )
+})()}
         </div>
 
         {tracking && (
