@@ -16,6 +16,7 @@ import Signup from './pages/Signup'
 import AdvisorLayout from './components/AdvisorLayout'
 import Landing from './pages/Landing'
 import Profile from './pages/Profile'
+import PageTransition from './components/PageTransition'
 
 function StudentLayout({ theme, toggleTheme, selectedOpp, setSelectedOpp }) {
   return (
@@ -23,17 +24,19 @@ function StudentLayout({ theme, toggleTheme, selectedOpp, setSelectedOpp }) {
       <Sidebar theme={theme} toggleTheme={toggleTheme} />
       <div style={{ marginLeft: 248, flex: 1 }}>
         <Topbar />
-        <Routes>
-          <Route path="/dashboard"     element={<Dashboard />} />
-          <Route path="/opportunities" element={<Opportunities setSelectedOpp={setSelectedOpp} />} />
-          <Route path="/tracker"       element={<Tracker />} />
-          <Route path="/recruiters"    element={<Recruiters />} />
-          <Route path="/cover-letter"  element={<CoverLetterBuilder opp={selectedOpp} />} />
-          <Route path="/legit-check"   element={<LegitChecker />} />
-          <Route path="/notifications" element={<Notifications />} />
-          <Route path="/profile"       element={<Profile />} />
-          <Route path="*"              element={<Navigate to="/dashboard" />} />
-        </Routes>
+        <PageTransition>
+          <Routes>
+            <Route path="/dashboard"     element={<Dashboard />} />
+            <Route path="/opportunities" element={<Opportunities setSelectedOpp={setSelectedOpp} />} />
+            <Route path="/tracker"       element={<Tracker />} />
+            <Route path="/recruiters"    element={<Recruiters />} />
+            <Route path="/cover-letter"  element={<CoverLetterBuilder opp={selectedOpp} />} />
+            <Route path="/legit-check"   element={<LegitChecker />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/profile"       element={<Profile />} />
+            <Route path="*"              element={<Navigate to="/dashboard" />} />
+          </Routes>
+        </PageTransition>
       </div>
     </div>
   )
