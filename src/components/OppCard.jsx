@@ -215,17 +215,17 @@ export default function OppCard({ opp, onShare, onCoverLetter }) {
               }}>
               AI Letter
             </button>
-           <button
-  onClick={e => { e.stopPropagation(); onCoverLetter && onCoverLetter(opp) }}
-              style={{
-                background: tracking ? 'var(--surface3)' : 'var(--navy)',
-                color: tracking ? 'var(--text2)' : 'var(--bg)',
-                border: 'none', padding: '6px 14px', borderRadius: 8,
-                fontSize: 11, fontWeight: 700, cursor: 'pointer',
-                fontFamily: 'Plus Jakarta Sans, sans-serif',
-              }}>
-              {tracking ? 'Cancel' : '+ Track'}
-            </button>
+          <button
+  onClick={e => { e.stopPropagation(); setTracking(!tracking) }}
+  style={{
+    background: tracking ? 'var(--surface3)' : 'var(--navy)',
+    color: tracking ? 'var(--text2)' : 'var(--bg)',
+    border: 'none', padding: '6px 14px', borderRadius: 8,
+    fontSize: 11, fontWeight: 700, cursor: 'pointer',
+    fontFamily: 'Plus Jakarta Sans, sans-serif',
+  }}>
+  {tracking ? 'Cancel' : '+ Track'}
+</button>
           </div>
         </div>
       </div>
