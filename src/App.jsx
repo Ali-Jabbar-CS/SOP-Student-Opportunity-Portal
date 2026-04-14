@@ -20,38 +20,6 @@ import PageTransition from './components/PageTransition'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useLocation } from 'react-router-dom'
 
-function StudentLayout({ theme, toggleTheme, selectedOpp, setSelectedOpp }) {
-  const location = useLocation()
-  return (
-    <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <Sidebar theme={theme} toggleTheme={toggleTheme} />
-      <div style={{ marginLeft: 248, flex: 1 }}>
-        <Topbar />
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
-          >
-            <Routes location={location}>
-              <Route path="/dashboard"     element={<Dashboard />} />
-              <Route path="/opportunities" element={<Opportunities setSelectedOpp={setSelectedOpp} />} />
-              <Route path="/tracker"       element={<Tracker />} />
-              <Route path="/recruiters"    element={<Recruiters />} />
-              <Route path="/cover-letter"  element={<CoverLetterBuilder opp={selectedOpp} />} />
-              <Route path="/legit-check"   element={<LegitChecker />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/profile"       element={<Profile />} />
-              <Route path="*"              element={<Navigate to="/dashboard" />} />
-            </Routes>
-          </motion.div>
-        </AnimatePresence>
-      </div>
-    </div>
-  )
-}
 
 function StudentLayout({ theme, toggleTheme, selectedOpp, setSelectedOpp }) {
   const location = useLocation()
