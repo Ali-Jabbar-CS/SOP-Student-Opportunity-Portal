@@ -17,26 +17,70 @@ import AdvisorLayout from './components/AdvisorLayout'
 import Landing from './pages/Landing'
 import Profile from './pages/Profile'
 import PageTransition from './components/PageTransition'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useLocation } from 'react-router-dom'
 
 function StudentLayout({ theme, toggleTheme, selectedOpp, setSelectedOpp }) {
+  const location = useLocation()
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar theme={theme} toggleTheme={toggleTheme} />
       <div style={{ marginLeft: 248, flex: 1 }}>
         <Topbar />
-        <PageTransition>
-          <Routes>
-            <Route path="/dashboard"     element={<Dashboard />} />
-            <Route path="/opportunities" element={<Opportunities setSelectedOpp={setSelectedOpp} />} />
-            <Route path="/tracker"       element={<Tracker />} />
-            <Route path="/recruiters"    element={<Recruiters />} />
-            <Route path="/cover-letter"  element={<CoverLetterBuilder opp={selectedOpp} />} />
-            <Route path="/legit-check"   element={<LegitChecker />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/profile"       element={<Profile />} />
-            <Route path="*"              element={<Navigate to="/dashboard" />} />
-          </Routes>
-        </PageTransition>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
+            <Routes location={location}>
+              <Route path="/dashboard"     element={<Dashboard />} />
+              <Route path="/opportunities" element={<Opportunities setSelectedOpp={setSelectedOpp} />} />
+              <Route path="/tracker"       element={<Tracker />} />
+              <Route path="/recruiters"    element={<Recruiters />} />
+              <Route path="/cover-letter"  element={<CoverLetterBuilder opp={selectedOpp} />} />
+              <Route path="/legit-check"   element={<LegitChecker />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/profile"       element={<Profile />} />
+              <Route path="*"              element={<Navigate to="/dashboard" />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
+      </div>
+    </div>
+  )
+}
+
+function StudentLayout({ theme, toggleTheme, selectedOpp, setSelectedOpp }) {
+  const location = useLocation()
+  return (
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <Sidebar theme={theme} toggleTheme={toggleTheme} />
+      <div style={{ marginLeft: 248, flex: 1 }}>
+        <Topbar />
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={location.pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: 'easeInOut' }}
+          >
+            <Routes location={location}>
+              <Route path="/dashboard"     element={<Dashboard />} />
+              <Route path="/opportunities" element={<Opportunities setSelectedOpp={setSelectedOpp} />} />
+              <Route path="/tracker"       element={<Tracker />} />
+              <Route path="/recruiters"    element={<Recruiters />} />
+              <Route path="/cover-letter"  element={<CoverLetterBuilder opp={selectedOpp} />} />
+              <Route path="/legit-check"   element={<LegitChecker />} />
+              <Route path="/notifications" element={<Notifications />} />
+              <Route path="/profile"       element={<Profile />} />
+              <Route path="*"              element={<Navigate to="/dashboard" />} />
+            </Routes>
+          </motion.div>
+        </AnimatePresence>
       </div>
     </div>
   )
@@ -56,13 +100,19 @@ function AuthenticatedApp({ theme, toggleTheme }) {
 }
 
 export default function App() {
-  const [theme, setTheme]     = useState('light')
+  const [theme, setTheme]     = useState(() => localStorage.getItem('sop-theme') || 'light')
   const [session, setSession] = useState(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', 'light')
-    document.documentElement.classList.remove('dark')
+    const saved = localStorage.getItem('sop-theme') || 'light'
+    setTheme(saved)
+    document.documentElement.setAttribute('data-theme', saved)
+    if (saved === 'dark') {
+      document.documentElement.classList.add('dark')
+    } else {
+      document.documentElement.classList.remove('dark')
+    }
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)
@@ -79,6 +129,7 @@ export default function App() {
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light'
     setTheme(next)
+    localStorage.setItem('sop-theme', next)
     document.documentElement.setAttribute('data-theme', next)
     if (next === 'dark') {
       document.documentElement.classList.add('dark')
